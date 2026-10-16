@@ -33,9 +33,11 @@ html = '\n'.join(line.strip() for line in html.splitlines() if line.strip()) + '
 
 os.makedirs(OUT, exist_ok=True)
 open(os.path.join(OUT, 'index.html'), 'w', encoding='utf-8').write(html)
+open(os.path.join(ROOT, 'index.html'), 'w', encoding='utf-8').write(html)
 
-# 3) Vercel config: always revalidate the page, plus a couple of safe headers
+# 3) Vercel config: always revalidate the page, plus cleanUrls and safe headers
 vercel = {
+    'cleanUrls': True,
     'headers': [{
         'source': '/(.*)',
         'headers': [
@@ -46,6 +48,7 @@ vercel = {
     }],
 }
 json.dump(vercel, open(os.path.join(OUT, 'vercel.json'), 'w'), indent=2)
+json.dump(vercel, open(os.path.join(ROOT, 'vercel.json'), 'w'), indent=2)
 
 raw = len(html.encode())
 print(f'site/index.html: {raw / 1024:.0f} KB, about {len(gzip.compress(html.encode(), 9)) / 1024:.0f} KB over the wire ({n} icon layers inlined)')

@@ -6,17 +6,18 @@ Two micro-interaction projects on one page: **01 Who we serve** (23 animated tra
 
 ## Deploy to Vercel
 
-The `site/` folder is the whole website: one `index.html` (all CSS, JS and icon artwork built in) plus `vercel.json`.
+The production website is self-contained into a single fast `index.html` (all CSS, JS, and 60 icon layers inlined) plus `vercel.json`.
 
-**Option A, command line** (needs Node.js; you'll be asked to log in to Vercel the first time):
+**Option A, GitHub (Zero-config):**
+1. Import this repository in Vercel (*Add New → Project*).
+2. Leave all settings at default (**Root Directory: `./`**, Framework Preset: **Other**, no build step needed).
+3. Click **Deploy**. (Deploying from `site/` as root directory is also fully supported).
 
+**Option B, Command line:**
 ```bash
-npx vercel deploy site --prod
+npx vercel deploy --prod
 ```
-
 Vercel prints a public URL you can share.
-
-**Option B, GitHub:** push this folder to a GitHub repo, then in Vercel choose *Add New → Project*, import the repo, and set **Root Directory** to `site`. There's no build step or framework to pick ("Other").
 
 ## Editing
 
