@@ -1,0 +1,1757 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Suhail Submission · UI Animation Case Studies</title>
+<meta name="description" content="Two micro-interaction case studies: 23 animated trade icons and a reactive AI orb with a friendly face, built with AI in plain HTML, CSS and JS.">
+<meta name="theme-color" content="#f4f7f5">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Suhail Submission · UI Animation Case Studies">
+<meta property="og:description" content="23 animated trade icons and a reactive AI orb with a friendly face, plus how they were made.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%234daf74'/%3E%3Cg transform='translate(13 20) scale(.079)'%3E%3Cpath fill='%23fff' d='M62 170A102 102 0 0 1 164 68H420A125 125 0 0 1 420 318H205C140 318 92 335 62 372Z' transform='translate(-62 -68)'/%3E%3Ccircle cx='140' cy='124' r='41' fill='%23141212'/%3E%3Ccircle cx='338' cy='124' r='41' fill='%23141212'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&display=swap"></noscript>
+<style>
+:root {
+--bg: #f4f7f5;
+--card: #ffffff;
+--ink: #1c2420;
+--muted: #8b928e;
+--line: #e6ebe8;
+--icon: #66b683;      /* the icons' own green, used for sparks, smoke and dust */
+--green: #4daf74;
+--green-ink: #2f8a55;
+--tint: #f1f9f4;
+--chip: #e2f3e9;
+}
+* { box-sizing: border-box; }
+body {
+margin: 0;
+background: var(--bg);
+color: var(--ink);
+font-family: "Figtree", system-ui, sans-serif;
+-webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 1240px; margin: 0 auto; padding: 56px 16px; }
+/* ---------- Card layout ---------- */
+.card {
+display: grid;
+grid-template-columns: minmax(260px, 1fr) 2fr;
+background: var(--card);
+border: 1px solid var(--line);
+border-radius: 20px;
+padding: 20px;
+gap: 20px;
+}
+.roles { display: flex; flex-direction: column; gap: 6px; padding-right: 20px; border-right: 1px solid var(--line); }
+.trades { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px 8px; align-content: start; }
+@media (max-width: 960px) {
+.card { grid-template-columns: 1fr; }
+.roles { border-right: 0; padding-right: 0; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+}
+@media (max-width: 760px) { .trades { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 400px) { .trades { grid-template-columns: 1fr; } }
+/* ---------- Items ---------- */
+.item {
+display: flex;
+align-items: center;
+gap: 14px;
+padding: 12px 14px;
+border-radius: 14px;
+color: inherit;
+text-decoration: none;
+outline: none;
+transition: background-color .25s ease;
+}
+.role { align-items: flex-start; padding: 16px 14px; }
+.item:hover, .item:focus-visible { background: var(--tint); }
+.item:focus-visible { box-shadow: 0 0 0 2px var(--green); }
+.label { min-width: 0; font-size: 19px; font-weight: 500; line-height: 1.25; transition: color .25s ease, transform .25s ease; }
+.item:hover .label, .item:focus-visible .label { color: var(--green-ink); transform: translateX(2px); }
+.role .label { font-size: 21px; display: block; margin-bottom: 6px; }
+.role p { margin: 0; color: var(--muted); font-size: 17px; line-height: 1.5; }
+/* ---------- Case study ---------- */
+.study { margin-top: 88px; }
+/* Speed: the browser skips laying out and painting the long case studies
+until they are scrolled near, and orbs pause while out of view. */
+.study { content-visibility: auto; contain-intrinsic-size: auto 2400px; }
+.is-offscreen, .is-offscreen * { animation-play-state: paused !important; }
+.study-head { max-width: 760px; }
+.eyebrow {
+margin: 0;
+color: var(--green-ink);
+font-size: 13px; font-weight: 600;
+letter-spacing: .08em; text-transform: uppercase;
+}
+/* Page header */
+.page-head { padding: 24px 0 72px; margin-bottom: 64px; border-bottom: 1px solid var(--line); }
+.page-head h1 {
+margin: 12px 0 16px;
+font-size: clamp(40px, 7vw, 72px); font-weight: 600;
+line-height: 1.05; letter-spacing: -.03em;
+}
+.page-head .lead { max-width: 56ch; }
+.page-toc { display: flex; flex-wrap: wrap; gap: 10px; margin: 28px 0 0; padding: 0; list-style: none; }
+.page-toc a {
+display: inline-flex; align-items: center; gap: 10px;
+padding: 8px 14px 8px 8px; border-radius: 999px;
+background: var(--card); border: 1px solid var(--line);
+color: var(--ink); font-size: 15px; font-weight: 500; text-decoration: none;
+transition: border-color .2s, background-color .2s;
+}
+.page-toc a:hover { border-color: var(--chip); background: var(--tint); }
+.page-toc a:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+.page-toc .sec-no { margin: 0; font-size: 13px; vertical-align: 0; }
+@media (max-width: 600px) { .page-head { padding: 8px 0 48px; margin-bottom: 48px; } }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+#icons-title, #orbs-title { scroll-margin-top: 32px; }
+.icons-head { margin-bottom: 36px; }
+.study h2, .orbs h2, .icons-head h2 {
+margin: 12px 0 16px;
+font-size: clamp(28px, 4.2vw, 42px); font-weight: 600;
+line-height: 1.15; letter-spacing: -.02em;
+text-wrap: balance;
+}
+.lead { margin: 0; color: var(--muted); font-size: 18px; line-height: 1.65; max-width: 62ch; }
+.stats {
+display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+margin: 40px 0 8px; padding: 0;
+border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+}
+.stats div { padding: 22px 0; }
+.stats div + div { padding-left: 24px; border-left: 1px solid var(--line); }
+.stats dt { color: var(--muted); font-size: 14px; }
+.stats dd { margin: 6px 0 0; font-size: 30px; font-weight: 600; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+.block {
+display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 40px;
+padding: 48px 0; border-bottom: 1px solid var(--line);
+}
+.block:last-child { border-bottom: 0; }
+.block-title h3 { margin: 0 0 8px; font-size: 20px; font-weight: 600; }
+.block-title p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.55; }
+.study h4 { margin: 0 0 6px; font-size: 17px; font-weight: 600; }
+.study p { line-height: 1.6; }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 28px; }
+.steps li { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 16px; position: relative; }
+.steps li:not(:last-child)::after {
+content: ""; position: absolute; left: 21px; top: 44px; bottom: -24px;
+width: 1px; background: var(--line);
+}
+.step-no {
+width: 44px; height: 44px; border-radius: 50%;
+display: grid; place-items: center;
+background: var(--chip); color: var(--green-ink);
+font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums;
+}
+.steps p { margin: 0; color: var(--muted); font-size: 16px; }
+.steps .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.tag {
+display: inline-flex; align-items: center; gap: 6px;
+padding: 4px 10px; border-radius: 999px;
+font-size: 13px; font-weight: 500; color: var(--ink);
+border: 1px solid var(--line); background: var(--card);
+}
+.tag::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--muted); opacity: .6; }
+.tag.good::before { background: var(--green); opacity: 1; }
+.tag.miss { color: var(--muted); }
+.prompts { display: grid; gap: 14px; }
+.prompt {
+margin: 0; padding: 20px 22px;
+background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+}
+.prompt figcaption { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; font-size: 14px; font-weight: 500; }
+.prompt figcaption span {
+color: var(--green-ink); font-size: 12px; font-weight: 600;
+letter-spacing: .06em; text-transform: uppercase;
+}
+.prompt blockquote {
+margin: 12px 0 0; padding-left: 14px;
+border-left: 2px solid var(--chip);
+font-size: 17px; line-height: 1.6;
+}
+.prompt .outcome { margin: 12px 0 0; color: var(--muted); font-size: 14px; }
+.prompt .outcome::before { content: "→ "; color: var(--green); }
+.lessons { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 36px; }
+.lessons p { margin: 0; color: var(--muted); font-size: 15px; }
+.stack { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.stack li {
+display: flex; flex-direction: column; gap: 4px;
+padding: 16px 18px; border-radius: 14px;
+background: var(--card); border: 1px solid var(--line);
+}
+.stack strong { font-size: 15px; font-weight: 600; }
+.stack span { color: var(--muted); font-size: 14px; }
+@media (max-width: 860px) {
+.block { grid-template-columns: 1fr; gap: 20px; padding: 36px 0; }
+}
+@media (max-width: 600px) {
+.study { margin-top: 56px; }
+.stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.stats div:nth-child(3) { padding-left: 0; border-left: 0; }
+.stats div:nth-child(n+3) { border-top: 1px solid var(--line); }
+.lessons, .stack { grid-template-columns: 1fr; }
+.prompt { padding: 16px; }
+.prompt blockquote { font-size: 16px; }
+}
+/* ---------- Orbs ---------- */
+.orbs { margin-top: 88px; }
+.orbs-grid { display: grid; grid-template-columns: minmax(0, 760px); gap: 20px; margin-top: 36px; }
+@media (max-width: 600px) {
+.orbs { margin-top: 56px; }
+.orb-card { padding: 16px; }
+.orb-card-head { flex-direction: column; }
+}
+.orb-card {
+display: flex; flex-direction: column; gap: 20px;
+padding: 22px; background: var(--card);
+border: 1px solid var(--line); border-radius: 20px;
+}
+.orb-card-head {
+display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+padding-bottom: 14px; border-bottom: 1px solid var(--line);
+}
+.orb-card-head h3 { margin: 0; font-size: 17px; font-weight: 600; }
+.orb-card-head p { margin: 4px 0 0; color: var(--muted); font-size: 14px; line-height: 1.5; }
+/* State pill (shared) */
+.state-pill {
+flex: none; display: inline-flex; align-items: center; gap: 6px;
+padding: 4px 10px; border-radius: 999px;
+font-size: 12px; font-weight: 600; white-space: nowrap;
+color: #10b981; background: rgba(16,185,129,.1); border: 1px solid rgba(16,185,129,.2);
+transition: color .3s, background-color .3s, border-color .3s;
+}
+.state-dot { position: relative; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.state-pill.is-active { color: #c084fc; background: rgba(168,85,247,.15); border-color: rgba(168,85,247,.3); }
+.state-pill.is-active .state-dot::after {
+content: ""; position: absolute; inset: 0; border-radius: 50%; background: currentColor;
+animation: orb-ping 1s cubic-bezier(0,0,.2,1) infinite;
+}
+@keyframes orb-ping { 75%, 100% { transform: scale(2); opacity: 0; } }
+/* Reactive orb */
+@keyframes ro-b1 { 0%, 100% { transform: translate(0, 0) scale(1, 1) rotate(0); } 33% { transform: translate(32px, -36px) scale(1.2, .88) rotate(100deg); } 66% { transform: translate(-26px, 26px) scale(.88, 1.18) rotate(220deg); } }
+@keyframes ro-b2 { 0%, 100% { transform: translate(0, 0) scale(1, 1) rotate(0); } 33% { transform: translate(-36px, 30px) scale(1.18, .92) rotate(-110deg); } 66% { transform: translate(26px, -30px) scale(.88, 1.2) rotate(-230deg); } }
+@keyframes ro-b3 { 0%, 100% { transform: translate(0, 0) scale(1) rotate(0); } 50% { transform: translate(30px, 30px) scale(1.22) rotate(170deg); } }
+@keyframes ro-lilac { 0%, 100% { transform: translate(0, 0) scale(.92, 1.08) rotate(0); } 40% { transform: translate(-30px, -26px) scale(1.28, .92) rotate(140deg); } 75% { transform: translate(28px, 18px) scale(1, 1.28) rotate(260deg); } }
+@keyframes ro-mesh { to { transform: rotate(360deg); } }
+@keyframes ro-counter { from { transform: rotate(360deg) scale(1.04); } to { transform: rotate(0) scale(.96); } }
+@keyframes ro-wave { 0% { transform: scale(1); opacity: .85; } 100% { transform: scale(1.18); opacity: 0; } }
+@keyframes ro-bounce { 0% { transform: scale(1); } 30% { transform: scale(.96); } 60% { transform: scale(1.025); } 100% { transform: scale(1.01); } }
+.ro-stage {
+flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+padding: 48px 16px; overflow: hidden; user-select: none;
+background: #ffffff; border: 1px solid var(--line); border-radius: 14px;
+}
+.ro { position: relative; width: 200px; height: 200px; cursor: pointer; }
+.ro-btn {
+position: absolute; inset: 0; z-index: 30;
+border: 0; border-radius: 50%; background: transparent; cursor: pointer; outline: none;
+}
+.ro-btn:focus-visible { box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #c084fc; }
+.ro-glow {
+position: absolute; inset: 0; z-index: 0; border-radius: 50%; pointer-events: none;
+opacity: .45; filter: blur(7px); transition: opacity .4s, filter .4s;
+}
+.ro:hover .ro-glow { opacity: .6; filter: blur(8px); }
+.ro-mesh { position: absolute; animation: ro-mesh 11s linear infinite; }
+.ro-glow .ro-mesh { inset: -32px; }
+.ro-sphere .ro-mesh { inset: -56px; }
+.ro-counter { position: absolute; inset: 0; animation: ro-counter 14s ease-in-out infinite alternate; }
+.ro-blob { position: absolute; border-radius: 50%; transition: opacity .5s; }
+.ro-base { inset: 8px; background: #115158; }
+.ro-b1 { top: 0; left: 12px; width: 224px; height: 224px; background: #4cb57f; mix-blend-mode: screen; animation: ro-b1 5.5s cubic-bezier(.45,.05,.55,.95) infinite; }
+.ro-b2 { bottom: 0; right: 12px; width: 208px; height: 208px; background: #34d399; mix-blend-mode: screen; animation: ro-b2 6.4s cubic-bezier(.45,.05,.55,.95) infinite; }
+.ro-b3 { top: 40px; right: 0; width: 192px; height: 192px; background: #0a363b; animation: ro-b3 5s cubic-bezier(.45,.05,.55,.95) infinite; }
+.ro-lilac { bottom: 16px; left: 16px; width: 176px; height: 176px; background: #c084fc; mix-blend-mode: screen; animation: ro-lilac 5.8s cubic-bezier(.45,.05,.55,.95) infinite; }
+/* the outer glow uses lighter blur than the clipped sphere */
+.ro-glow .ro-base { opacity: .9; filter: blur(12px); background: #8fd3bb; }
+.ro-glow .ro-b1 { opacity: .85; filter: blur(16px); }
+.ro-glow .ro-b2 { opacity: .8; filter: blur(16px); }
+.ro-glow .ro-b3 { opacity: .9; filter: blur(16px); background: #b9e8d8; }
+.ro-glow .ro-lilac { opacity: .85; filter: blur(16px); }
+.ro-sphere .ro-base { opacity: .95; filter: blur(24px); }
+.ro-sphere .ro-b1 { opacity: .9; filter: blur(40px); }
+.ro-sphere .ro-b2 { opacity: .85; filter: blur(40px); }
+.ro-sphere .ro-b3 { opacity: .95; filter: blur(40px); background: #2f7a7c; }
+.ro-sphere .ro-lilac { opacity: .8; filter: blur(40px); }
+.ro-wave {
+position: absolute; inset: 0; z-index: 0; border-radius: 50%; opacity: 0; pointer-events: none;
+box-shadow: 0 0 12px 2px rgba(192,132,252,.85), 0 0 18px 4px rgba(76,181,127,.7);
+}
+.ro-wave.go { animation: ro-wave .65s cubic-bezier(.16,1,.3,1) forwards; }
+.ro-sphere {
+position: relative; z-index: 10; width: 100%; height: 100%;
+overflow: hidden; border-radius: 50%; background: #dff3ec;
+box-shadow: inset 0 0 0 1px rgba(255,255,255,.2), 0 12px 32px rgba(7,25,28,.18);
+transition: transform .3s;
+}
+.ro:hover .ro-sphere { transform: scale(1.01); }
+.ro-sphere.bounce { animation: ro-bounce .35s cubic-bezier(.34,1.56,.64,1) forwards; }
+.ro-flash {
+position: absolute; inset: 0; border-radius: 50%; opacity: 0; mix-blend-mode: screen;
+background: linear-gradient(to top right, rgba(192,132,252,.3), transparent, rgba(76,181,127,.3));
+transition: opacity .3s;
+}
+.ro-flash.on { opacity: .75; }
+.ro-rim {
+position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+box-shadow: inset 0 2px 10px rgba(255,255,255,.6), inset 0 -8px 18px rgba(17,81,88,.28);
+}
+.ro-vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(transparent, transparent, rgba(255,255,255,.22)); }
+/* Mascot: the speech-bubble face, inverted (white body, black eyes), sitting
+inside the sphere so it pulses and bounces with the orb. */
+.mascot {
+position: absolute; left: 50%; top: 50%; z-index: 2;
+width: 56%; height: auto;
+transform: translate(-50%, -50%);
+filter: drop-shadow(0 4px 10px rgba(7,25,28,.18));
+pointer-events: none;
+}
+.corb .mascot { width: 66%; }   /* a little larger on the small chat orbs, so the face stays readable */
+/* Eyes. Units are the mascot's own (eyes are r=41 inside a ~250-tall body),
+and the eyes are clipped to the body, so nothing can spill onto the orb. */
+/* thinking: the eyes swap places along one figure-eight (∞) that spans both of
+them, each half a loop apart. Halfway through they have traded sides, and at
+the end they are home again. (∞ centre (301,192), half-width 99, reach ±30.) */
+@keyframes eye-swap-l {
+0% { transform: translate(0.0px, 0.0px); }
+4.167% { transform: translate(3.4px, -15.0px); }
+8.333% { transform: translate(13.3px, -26.0px); }
+12.5% { transform: translate(29.0px, -30.0px); }
+16.67% { transform: translate(49.5px, -26.0px); }
+20.83% { transform: translate(73.4px, -15.0px); }
+25% { transform: translate(99.0px, 0.0px); }
+29.17% { transform: translate(124.6px, 15.0px); }
+33.33% { transform: translate(148.5px, 26.0px); }
+37.5% { transform: translate(169.0px, 30.0px); }
+41.67% { transform: translate(184.7px, 26.0px); }
+45.83% { transform: translate(194.6px, 15.0px); }
+50% { transform: translate(198.0px, 0.0px); }
+54.17% { transform: translate(194.6px, -15.0px); }
+58.33% { transform: translate(184.7px, -26.0px); }
+62.5% { transform: translate(169.0px, -30.0px); }
+66.67% { transform: translate(148.5px, -26.0px); }
+70.83% { transform: translate(124.6px, -15.0px); }
+75% { transform: translate(99.0px, 0.0px); }
+79.17% { transform: translate(73.4px, 15.0px); }
+83.33% { transform: translate(49.5px, 26.0px); }
+87.5% { transform: translate(29.0px, 30.0px); }
+91.67% { transform: translate(13.3px, 26.0px); }
+95.83% { transform: translate(3.4px, 15.0px); }
+100% { transform: translate(0.0px, 0.0px); }
+}
+@keyframes eye-swap-r {
+0% { transform: translate(0.0px, 0.0px); }
+4.167% { transform: translate(-3.4px, -15.0px); }
+8.333% { transform: translate(-13.3px, -26.0px); }
+12.5% { transform: translate(-29.0px, -30.0px); }
+16.67% { transform: translate(-49.5px, -26.0px); }
+20.83% { transform: translate(-73.4px, -15.0px); }
+25% { transform: translate(-99.0px, 0.0px); }
+29.17% { transform: translate(-124.6px, 15.0px); }
+33.33% { transform: translate(-148.5px, 26.0px); }
+37.5% { transform: translate(-169.0px, 30.0px); }
+41.67% { transform: translate(-184.7px, 26.0px); }
+45.83% { transform: translate(-194.6px, 15.0px); }
+50% { transform: translate(-198.0px, 0.0px); }
+54.17% { transform: translate(-194.6px, -15.0px); }
+58.33% { transform: translate(-184.7px, -26.0px); }
+62.5% { transform: translate(-169.0px, -30.0px); }
+66.67% { transform: translate(-148.5px, -26.0px); }
+70.83% { transform: translate(-124.6px, -15.0px); }
+75% { transform: translate(-99.0px, 0.0px); }
+79.17% { transform: translate(-73.4px, 15.0px); }
+83.33% { transform: translate(-49.5px, 26.0px); }
+87.5% { transform: translate(-29.0px, 30.0px); }
+91.67% { transform: translate(-13.3px, 26.0px); }
+95.83% { transform: translate(-3.4px, 15.0px); }
+100% { transform: translate(0.0px, 0.0px); }
+}
+/* answering: a small, easy up-and-down drift */
+@keyframes eyes-talk {
+0%, 100% { transform: translateY(0); }
+25% { transform: translateY(-14px); }
+50% { transform: translateY(5px); }
+75% { transform: translateY(-9px); }
+}
+.corb.is-thinking .eye-l { animation: eye-swap-l 2.8s linear infinite; }
+.corb.is-thinking .eye-r { animation: eye-swap-r 2.8s linear infinite; }
+.corb.is-answering .eyes { animation: eyes-talk 1.6s ease-in-out infinite; }
+/* Active state: a quicker but still velvety flow */
+.ro.is-reactive .ro-b1 { animation-duration: 3.8s; }
+.ro.is-reactive .ro-b2 { animation-duration: 4.4s; }
+.ro.is-reactive .ro-b3 { animation-duration: 3.5s; }
+.ro.is-reactive .ro-lilac { animation-duration: 3.9s; opacity: .92 !important; transform: scale(1.22) !important; }
+.ro.is-reactive .ro-mesh { animation-duration: 7.8s; }
+.ro.is-reactive .ro-counter { animation-duration: 9.6s; }
+.ro.is-reactive .ro-glow { opacity: .6; filter: blur(8px); }
+.ro-speed { margin: 24px 0 0; color: var(--muted); font-size: 12px; text-align: center; }
+.ro-speed .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.ro-speed .em { color: #059669; }
+.ro-speed .li { color: #9333ea; }
+@media (prefers-reduced-motion: reduce) {
+.ro *, .state-dot::after { animation: none !important; }
+}
+/* ---------- The orb in a chatbot (demo) ---------- */
+/* Reusable orb at any size: the 200px orb is drawn once and scaled by --k. */
+.corb { position: relative; display: inline-block; flex: none; width: calc(200px * var(--k)); height: calc(200px * var(--k)); }
+.corb span { display: block; }
+.corb-in { position: absolute; left: 0; top: 0; width: 200px; height: 200px; transform: scale(var(--k)); transform-origin: 0 0; }
+.corb-fx { position: absolute; inset: 0; }
+/* live = thinking or answering: the swirl speeds up and the glow brightens */
+.corb.is-live .ro-b1 { animation-duration: 3.8s; }
+.corb.is-live .ro-b2 { animation-duration: 4.4s; }
+.corb.is-live .ro-b3 { animation-duration: 3.5s; }
+.corb.is-live .ro-lilac { animation-duration: 3.9s; }
+.corb.is-live .ro-mesh { animation-duration: 6s; }
+/* Glow follows the state.
+idle: no glow · thinking: a firm, steady glow · answering: rises and falls
+with the text, driven by --e (0..1), which the script smooths every frame. */
+.corb .ro-glow { opacity: 0; transition: opacity .6s ease, filter .6s ease; }
+.corb.is-thinking .ro-glow { opacity: .85; filter: blur(8px); }
+.corb.is-answering .ro-glow { opacity: calc(.35 + .55 * var(--e, 0)); filter: blur(8px); transition: none; }
+.corb:not(.is-answering) .corb-fx { transition: transform .5s ease, filter .5s ease; }
+/* thinking: only the body breathes, slowly; the glow holds steady */
+@keyframes corb-breathe {
+0%, 100% { transform: scale(1); }
+50% { transform: scale(1.045); }
+}
+.corb.is-thinking .corb-fx { animation: corb-breathe 2s ease-in-out infinite; }
+/* answering: the pulse tracks the words as they appear */
+.corb.is-answering .corb-fx {
+transform: scale(calc(1 + .09 * var(--e, 0)));
+filter: brightness(calc(1 + .12 * var(--e, 0))) saturate(calc(1 + .15 * var(--e, 0)));
+}
+.corb.is-answering .ro-wave {
+opacity: calc(.55 * var(--e, 0));
+transform: scale(calc(1 + .16 * var(--e, 0)));
+}
+.bot-av { padding: 0; border: 0; background: transparent; border-radius: 50%; cursor: pointer; }
+.bot-av:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+.corb.is-still * { animation-play-state: paused !important; }  /* older avatars rest */
+.chat-demo { display: grid; grid-template-columns: minmax(0, 400px) minmax(0, 1fr); gap: 40px; align-items: start; margin-top: 56px; }
+@media (max-width: 860px) { .chat-demo { grid-template-columns: 1fr; gap: 28px; } }
+.chat-frame {
+position: relative; height: 640px; overflow: hidden;
+border: 1px solid var(--line); border-radius: 20px;
+background: var(--bg) radial-gradient(var(--line) 1px, transparent 1px) 0 0 / 18px 18px;
+}
+.bot {
+position: absolute; inset: 12px 12px 84px 12px;
+display: flex; flex-direction: column; overflow: hidden;
+background: #fff; border-radius: 16px;
+box-shadow: 0 12px 40px rgba(20,40,30,.14), 0 0 0 1px rgba(0,0,0,.04);
+transform-origin: 0 100%;
+transition: opacity .25s ease, transform .3s cubic-bezier(.3,1.3,.5,1), visibility 0s;
+}
+.bot.is-closed { opacity: 0; visibility: hidden; transform: scale(.9) translateY(12px); transition: opacity .2s ease, transform .2s ease, visibility 0s .2s; }
+.bot-head { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--green); color: #fff; }
+.bot-title { flex: 1; min-width: 0; line-height: 1.2; }
+.bot-title strong { display: block; font-size: 14px; font-weight: 600; }
+.bot-title span { font-size: 11.5px; opacity: .85; }
+.bot-icon {
+width: 28px; height: 28px; display: grid; place-items: center; flex: none;
+border: 0; border-radius: 8px; background: transparent; color: inherit; cursor: pointer;
+}
+.bot-icon:hover { background: rgba(255,255,255,.15); }
+.bot-icon:focus-visible { outline: 2px solid #fff; outline-offset: 1px; }
+.bot-icon svg, .bot-meta svg, .bot-send svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.bot-body { flex: 1; overflow-y: auto; padding: 16px 14px 8px; display: flex; flex-direction: column; gap: 12px; }
+.msg { display: flex; align-items: flex-end; gap: 8px; }
+.msg.user { justify-content: flex-end; }
+.bubble { max-width: 84%; padding: 10px 12px; border-radius: 14px; font-size: 13.5px; line-height: 1.55; overflow-wrap: anywhere; }
+.msg.bot-msg .bubble { background: #f2f4f3; color: var(--ink); border-bottom-left-radius: 4px; }
+.msg.user .bubble { background: var(--green); color: #fff; border-bottom-right-radius: 4px; }
+.bubble p { margin: 0 0 8px; }
+.bubble h4 { margin: 12px 0 6px; font-size: 15px; font-weight: 600; }
+.bubble ul, .bubble ol { margin: 4px 0 8px; padding-left: 18px; }
+.bubble li { margin: 0 0 6px; }
+.bubble > :last-child { margin-bottom: 0; }
+.bubble a { color: inherit; }
+.bot-av { flex: none; width: 28px; height: 28px; margin-bottom: 2px; }
+.bot-meta { display: flex; align-items: center; gap: 8px; margin: -4px 0 0 36px; color: var(--muted); font-size: 11px; }
+.typing { display: inline-flex; gap: 4px; padding: 4px 2px; }
+.typing i { width: 6px; height: 6px; border-radius: 50%; background: #9aa39e; animation: typing 1s ease-in-out infinite; }
+.typing i:nth-child(2) { animation-delay: .15s; }
+.typing i:nth-child(3) { animation-delay: .3s; }
+@keyframes typing { 0%, 60%, 100% { transform: none; opacity: .5; } 30% { transform: translateY(-3px); opacity: 1; } }
+.bot-chips { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; padding: 2px 0 4px; transition: opacity .25s; }
+.bot-chips[hidden] { display: none; }
+.bot-chip {
+padding: 6px 12px; border-radius: 999px; cursor: pointer;
+font: inherit; font-size: 12.5px; font-weight: 500; color: var(--ink);
+background: #fff; border: 1px solid var(--line);
+}
+.bot-chip:hover { background: var(--tint); border-color: var(--chip); }
+.bot-chip:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+.bot-input {
+display: flex; align-items: center; gap: 6px;
+margin: 4px 12px 12px; padding: 4px 4px 4px 14px;
+border: 1px solid var(--line); border-radius: 12px; background: #fff;
+}
+.bot-input:focus-within { border-color: var(--green); }
+.bot-input input { flex: 1; min-width: 0; border: 0; outline: none; padding: 8px 0; font: inherit; font-size: 13.5px; color: var(--ink); background: transparent; }
+.bot-send { width: 32px; height: 32px; flex: none; display: grid; place-items: center; border: 0; border-radius: 9px; background: transparent; color: var(--muted); cursor: pointer; }
+.bot-send.ready { background: var(--green); color: #fff; }
+.bot-send:focus-visible { outline: 2px solid var(--green); outline-offset: 1px; }
+.bot-launch {
+position: absolute; left: 16px; bottom: 14px; width: 56px; height: 56px;
+padding: 0; border: 0; border-radius: 50%; background: transparent; cursor: pointer;
+}
+.bot-launch:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+.demo-side h3 { margin: 0 0 8px; font-size: 20px; font-weight: 600; }
+.demo-side > p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.6; max-width: 46ch; }
+.orb-states { list-style: none; margin: 24px 0; padding: 0; display: grid; gap: 10px; }
+.orb-states li {
+display: grid; grid-template-columns: 12px minmax(0, 1fr); gap: 12px; align-items: start;
+padding: 14px 16px; border-radius: 14px; border: 1px solid var(--line); background: var(--card);
+color: var(--muted); transition: border-color .25s, background-color .25s, color .25s;
+}
+.orb-states li.on { border-color: var(--chip); background: var(--tint); color: var(--ink); }
+.orb-states .st-dot { width: 10px; height: 10px; margin-top: 4px; border-radius: 50%; border: 2px solid currentColor; opacity: .5; }
+.orb-states li.on .st-dot { background: var(--green); border-color: var(--green); opacity: 1; box-shadow: 0 0 0 4px var(--chip); }
+.orb-states h4 { margin: 0 0 2px; font-size: 15px; font-weight: 600; color: var(--ink); }
+.orb-states p { margin: 0; font-size: 14px; line-height: 1.5; }
+.demo-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.demo-btn {
+padding: 9px 16px; border-radius: 10px; cursor: pointer;
+font: inherit; font-size: 14px; font-weight: 600; color: #fff;
+background: var(--green); border: 0;
+}
+.demo-btn:hover { background: var(--green-ink); }
+.demo-btn:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+.demo-actions .hint { color: var(--muted); font-size: 13px; }
+@media (prefers-reduced-motion: reduce) {
+.corb *, .typing i { animation: none !important; }
+}
+/* ---------- Section number & orb case study ---------- */
+.sec-no {
+display: inline-grid; place-items: center;
+min-width: 1.5em; height: 1.5em; padding: 0 .3em; margin-right: .45em;
+border-radius: .35em; background: var(--chip); color: var(--green-ink);
+font-size: .62em; font-weight: 600; letter-spacing: .02em;
+vertical-align: .18em; font-variant-numeric: tabular-nums;
+}
+.compare { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 600px) { .compare { grid-template-columns: 1fr; } }
+.compare-card {
+margin: 0; overflow: hidden;
+background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+}
+.compare-card.is-after { border-color: var(--chip); }
+.compare-stage {
+display: grid; place-items: center; height: 170px;
+background: var(--bg) radial-gradient(var(--line) 1px, transparent 1px) 0 0 / 18px 18px;
+border-bottom: 1px solid var(--line);
+}
+.compare-card figcaption { padding: 18px 20px 20px; }
+.compare-card h4 { margin: 12px 0 8px; }
+.compare-card ul { margin: 0; padding-left: 18px; color: var(--muted); font-size: 15px; line-height: 1.6; }
+.compare-card li + li { margin-top: 4px; }
+.old-avatar {
+width: 64px; height: 64px; border-radius: 50%;
+display: grid; place-items: center;
+background: var(--green); color: #fff;
+box-shadow: 0 6px 16px rgba(20,40,30,.12);
+}
+.old-avatar svg { width: 30px; height: 30px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+/* Icon slot */
+.ico {
+position: relative;
+flex: none;
+width: 46px; height: 46px;
+display: grid; place-items: center;
+}
+.role .ico { width: 52px; height: 52px; }
+/* Each icon is the original artwork cut into layers (icons/layers/<icon>/).
+At rest the layers line up exactly, so the icon looks untouched. */
+.ico svg { position: relative; width: 42px; height: 42px; overflow: visible; }
+.ico svg * { transform-box: view-box; }
+.ghost { opacity: 0; }                      /* extras that only appear while animating */
+.g-fill { fill: var(--icon); }
+.g-line { fill: none; stroke: var(--icon); stroke-width: 1.8; stroke-linecap: round; }
+/* ======================================================
+Per-icon animations. They run while the item has
+.is-playing (added by the script on hover / focus) and
+finish their current loop before stopping.
+====================================================== */
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes spin-r { to { transform: rotate(-360deg); } }
+@keyframes spin-r2 { to { transform: rotate(-720deg); } }
+@keyframes pop { 0%, 40% { opacity: 0; transform: scale(.4); } 50% { opacity: 1; transform: scale(1); } 70%, 100% { opacity: 0; transform: scale(1.25); } }
+@keyframes drop {
+0% { transform: translateY(-9px); opacity: 0; }
+22% { transform: translateY(1px); opacity: 1; }
+30%, 100% { transform: none; opacity: 1; }
+}
+@keyframes puff { 0% { opacity: 0; transform: none; } 20% { opacity: .9; } 100% { opacity: 0; transform: translate(2px, -8px) scale(1.8); } }
+/* Subcontractors: gears ratchet round in two snappy steps with a small pop
+(the gears are tiny and six-toothed, so a smooth spin barely reads),
+while the worker nods along with each step. The gears end on a multiple
+of 60deg, which looks identical to the start, so the loop is seamless. */
+@keyframes ratchet-a {
+0% { transform: none; }
+30% { transform: rotate(132deg) scale(1.22); }
+40%, 50% { transform: rotate(120deg); }
+80% { transform: rotate(252deg) scale(1.22); }
+90%, 100% { transform: rotate(240deg); }
+}
+@keyframes ratchet-b {
+0% { transform: none; }
+30% { transform: rotate(-100deg) scale(1.25); }
+40%, 50% { transform: rotate(-90deg); }
+80% { transform: rotate(-190deg) scale(1.25); }
+90%, 100% { transform: rotate(-180deg); }
+}
+@keyframes nod { 0%, 50%, 100% { transform: none; } 25%, 75% { transform: translateY(-2.5px) rotate(-10deg); } }
+/* (body uses the shared `bob` keyframes defined with Facilities below) */
+.i-sub .gear-a { transform-origin: 44px 18.5px; }
+.i-sub .gear-b { transform-origin: 39.5px 30.5px; }
+.i-sub .head { transform-origin: 23px 31px; }
+.is-playing .i-sub .gear-a { animation: ratchet-a 2s cubic-bezier(.5,0,.3,1) infinite; }
+.is-playing .i-sub .gear-b { animation: ratchet-b 2s cubic-bezier(.5,0,.3,1) infinite; }
+.is-playing .i-sub .head { animation: nod 2s ease-in-out infinite; }
+.is-playing .i-sub .body { animation: bob 2s ease-in-out infinite; }
+/* Supplier: forklift raises its forks */
+@keyframes fork { 0%, 100% { transform: none; } 40%, 60% { transform: translateY(-7px); } }
+@keyframes lean { 0%, 100% { transform: none; } 40%, 60% { transform: rotate(-2deg); } }
+.i-sup .truck { transform-origin: 25px 46px; }
+.is-playing .i-sup .fork { animation: fork 1.8s cubic-bezier(.5,0,.3,1) infinite; }
+.is-playing .i-sup .truck { animation: lean 1.8s ease-in-out infinite; }
+/* General contractor: tools scissor and clink */
+@keyframes tool-a { 0%, 65%, 100% { transform: none; } 30% { transform: rotate(-14deg); } 50% { transform: rotate(4deg); } }
+@keyframes tool-b { 0%, 65%, 100% { transform: none; } 30% { transform: rotate(14deg); } 50% { transform: rotate(-4deg); } }
+.i-gc .tool-a, .i-gc .tool-b { transform-origin: 29.6px 29px; }
+.i-gc .spark { transform-origin: 29.5px 5px; }
+.is-playing .i-gc .tool-a { animation: tool-a 1.4s ease-in-out infinite; }
+.is-playing .i-gc .tool-b { animation: tool-b 1.4s ease-in-out infinite; }
+.is-playing .i-gc .spark { animation: pop 1.4s ease-out infinite; }
+/* HVAC: vent spins, unit hums */
+@keyframes hum { 0%, 50%, 100% { transform: none; } 12% { transform: translate(.4px, -.3px); } 25% { transform: translate(-.4px, .3px); } 37% { transform: translate(.3px, .4px); } 62% { transform: translate(-.3px, -.4px); } 75% { transform: translate(.4px, .3px); } 87% { transform: translate(-.4px, -.3px); } }
+.i-hvac .fan { transform-origin: 30px 29.5px; }
+.is-playing .i-hvac .fan { animation: spin .9s linear infinite; }
+.is-playing .i-hvac .frame { animation: hum .9s linear infinite; }
+/* Concrete: the trowel sweeps right across the splash and smooths it away,
+then sweeps back and the splash reappears behind it. The wipe edge of the
+splash's mask rides along with the blade's leading edge. */
+@keyframes sweep {
+0%, 8%, 92%, 100% { transform: none; }
+42%, 56% { transform: translateX(27px); }
+}
+.is-playing .i-con .trowel,
+.is-playing .i-con .wipe { animation: sweep 2.4s cubic-bezier(.55,0,.35,1) infinite; }
+/* Structural steel: frame assembles beam by beam */
+@keyframes grow { 0% { transform: scaleY(0); } 22%, 100% { transform: none; } }
+.i-steel .col { transform-origin: 30px 47px; }
+.is-playing .i-steel .col { animation: grow 2.2s cubic-bezier(.3,1.3,.5,1) infinite; }
+.is-playing .i-steel .b3 { animation: drop 2.2s ease-out .12s infinite backwards; }
+.is-playing .i-steel .b2 { animation: drop 2.2s ease-out .24s infinite backwards; }
+.is-playing .i-steel .b1 { animation: drop 2.2s ease-out .36s infinite backwards; }
+.is-playing .i-steel .roof { animation: drop 2.2s ease-out .5s infinite backwards; }
+/* Plumbing: jaw clamps, then the wrench tightens */
+@keyframes tighten { 0%, 25%, 90%, 100% { transform: none; } 50%, 65% { transform: rotate(22deg); } }
+@keyframes clamp { 0%, 25%, 100% { transform: none; } 12% { transform: translate(1.4px, -1.7px); } }
+@keyframes nut { 0%, 25%, 100% { transform: none; } 12% { transform: translate(.7px, -.85px); } }
+.i-plumb .wrench { transform-origin: 39px 21px; }
+.is-playing .i-plumb .wrench { animation: tighten 1.8s ease-in-out infinite; }
+.is-playing .i-plumb .jaw { animation: clamp 1.8s ease-in-out infinite; }
+.is-playing .i-plumb .nut { animation: nut 1.8s ease-in-out infinite; }
+/* Civil: meshing gears turn against each other */
+.i-civil .gear-a { transform-origin: 18px 18.5px; }
+.i-civil .gear-b { transform-origin: 36.5px 36.5px; }
+.is-playing .i-civil .gear-a { animation: spin-r 2.4s linear infinite; }
+.is-playing .i-civil .gear-b { animation: spin 2.4s linear infinite; }
+/* Electrical contractors: bolt flickers, meter charges, panel sparks */
+@keyframes flicker { 0%, 45%, 100% { opacity: 1; transform: none; } 10% { opacity: .2; } 20% { opacity: 1; transform: scale(1.25); } 30% { opacity: .45; } }
+@keyframes charge { 0%, 100% { transform: none; } 10% { transform: scaleX(.15); } 50% { transform: none; } }
+@keyframes zap { 0%, 15% { opacity: 0; transform: none; } 25% { opacity: 1; } 45%, 100% { opacity: 0; transform: scale(1.2); } }
+.i-ec .bolt { transform-origin: 30px 23.5px; }
+.i-ec .bar { transform-origin: 23px 32.5px; }
+.i-ec .spark { transform-origin: 30px 22px; }
+.is-playing .i-ec .bolt { animation: flicker 1.4s linear infinite; }
+.is-playing .i-ec .bar { animation: charge 1.4s ease-out infinite; }
+.is-playing .i-ec .spark { animation: zap 1.4s ease-out infinite; }
+/* Electrical suppliers: the plug pushes in and the cord is dragged along with it
+(its end stretches from the bend so it stays attached), then small
+thunderbolts pop out at the prongs. Plug and cord share one timing.
+The stretch is anchored exactly at the join, so no seam opens, and the end
+keeps the original 1px gap to the plug (8px end -> 11px as the plug moves 3px). */
+@keyframes plugin { 0%, 100% { transform: none; } 30%, 70% { transform: translateX(3px); } }
+@keyframes cord-stretch { 0%, 100% { transform: none; } 30%, 70% { transform: scaleX(1.375); } }
+@keyframes zap-bolt {
+0%, 30% { opacity: 0; transform: scale(.3) rotate(0); }
+38% { opacity: 1; transform: scale(1.2) rotate(-10deg); }
+46% { opacity: 1; transform: scale(1) rotate(0); }
+60%, 100% { opacity: 0; transform: scale(.8); }
+}
+.i-es .cord-tail { transform-origin: 17px 37px; }     /* stretches from where it joins the curve */
+.i-es .bolt { transform-origin: 0 0; }
+.is-playing .i-es .plug { animation: plugin 1.6s cubic-bezier(.6,0,.3,1) infinite; }
+.is-playing .i-es .cord-tail { animation: cord-stretch 1.6s cubic-bezier(.6,0,.3,1) infinite; }
+.is-playing .i-es .b1 { animation: zap-bolt 1.6s ease-out infinite; }
+.is-playing .i-es .b2 { animation: zap-bolt 1.6s ease-out .06s infinite; }
+.is-playing .i-es .b3 { animation: zap-bolt 1.6s ease-out .12s infinite; }
+/* Utility & earthwork: wrench cranks the gear (it leads, the gear follows,
+so the handle never runs into the gear's opening) */
+@keyframes crank { 0%, 100% { transform: none; } 40% { transform: rotate(26deg); } 55% { transform: rotate(22deg); } }
+@keyframes crank-w { 0%, 100% { transform: none; } 35% { transform: rotate(36deg); } 55% { transform: rotate(30deg); } }
+.i-earth .gear { transform-origin: 30px 30px; }
+.i-earth .wrench { transform-origin: 30px 30px; }
+.is-playing .i-earth .gear { animation: crank 1.6s ease-in-out infinite; }
+.is-playing .i-earth .wrench { animation: crank-w 1.6s ease-in-out infinite; }
+/* Roofing: roof bounces, chimney puffs */
+@keyframes roof { 0%, 45%, 100% { transform: none; } 20% { transform: translateY(-3px); } 35% { transform: scale(1.05, .95); } }
+@keyframes window { 0%, 15%, 60%, 100% { transform: none; } 30% { transform: translateY(-1.5px); } 45% { transform: translateY(.5px); } }
+.i-roof .roof { transform-origin: 30px 32px; }
+.i-roof .puff { transform-origin: 42px 12px; }
+.is-playing .i-roof .roof { animation: roof 1.6s ease-in-out infinite; }
+.is-playing .i-roof .window { animation: window 1.6s ease-in-out infinite; }
+.is-playing .i-roof .puff { animation: puff 1.6s ease-out infinite; }
+.is-playing .i-roof .puff.p2 { animation-delay: .5s; animation-fill-mode: backwards; }
+/* Flooring: a ball hops up the stairs */
+@keyframes hop {
+0% { opacity: 0; transform: none; }
+6% { opacity: 1; transform: none; }
+14% { transform: translate(4.75px, -13px); }
+20% { transform: translate(9.5px, -9px); }
+28% { transform: translate(14px, -22px); }
+34% { transform: translate(18.5px, -18px); }
+42% { transform: translate(22.5px, -31px); }
+48% { transform: translate(26.5px, -27px); }
+72% { opacity: 1; transform: translate(26.5px, -27px); }
+86%, 100% { opacity: 0; transform: translate(26.5px, -27px); }
+}
+.is-playing .i-floor .ball { animation: hop 1.8s ease-in-out infinite; }
+/* Painting: roller rolls, paint drips */
+@keyframes roll { 0%, 100% { transform: none; } 30% { transform: translateY(-3px) rotate(-4deg); } 70% { transform: translateY(2px) rotate(3deg); } }
+@keyframes drip { 0%, 30% { opacity: 0; transform: none; } 40% { opacity: 1; } 90%, 100% { opacity: 0; transform: translateY(12px); } }
+.i-paint .roller { transform-origin: 35px 51px; }
+.is-playing .i-paint .roller { animation: roll 1.6s ease-in-out infinite; }
+.is-playing .i-paint .drop { animation: drip 1.6s ease-in infinite; }
+/* Masonry: blocks stack up, bottom row first */
+.is-playing .i-mason .k3 { animation: drop 2.2s ease-out infinite; }
+.is-playing .i-mason .k4 { animation: drop 2.2s ease-out .12s infinite backwards; }
+.is-playing .i-mason .k1 { animation: drop 2.2s ease-out .26s infinite backwards; }
+.is-playing .i-mason .k2 { animation: drop 2.2s ease-out .38s infinite backwards; }
+/* Demolition: wrecking ball swings, engine puffs */
+@keyframes pendulum { 0%, 100% { transform: none; } 25% { transform: rotate(24deg); } 75% { transform: rotate(-22deg); } }
+@keyframes shake { 0%, 70%, 80%, 100% { transform: none; } 73% { transform: translateX(-.7px); } 77% { transform: translateX(.7px); } }
+.i-demo .ball { transform-origin: 44.5px 17px; }
+.i-demo .puff { transform-origin: 16.5px 22px; }
+.is-playing .i-demo .ball { animation: pendulum 1.8s ease-in-out infinite; }
+.is-playing .i-demo .crane { animation: shake 1.8s linear infinite; }
+.is-playing .i-demo .puff { animation: puff 1.8s ease-out infinite; }
+.is-playing .i-demo .puff.p2 { animation-delay: .6s; animation-fill-mode: backwards; }
+/* Drywall: hammer winds up and strikes */
+@keyframes strike { 0%, 80%, 100% { transform: none; } 40% { transform: rotate(16deg); } 55% { transform: rotate(-9deg); } 68% { transform: rotate(2deg); } }
+@keyframes impact { 0%, 53% { opacity: 0; transform: scale(.6); } 58% { opacity: 1; transform: none; } 75%, 100% { opacity: 0; transform: scale(1.25); } }
+.i-dry .hammer { transform-origin: 30px 47px; }
+.i-dry .impact { transform-origin: 13px 17px; }
+.is-playing .i-dry .hammer { animation: strike 1.2s ease-in infinite; }
+.is-playing .i-dry .impact { animation: impact 1.2s ease-out infinite; }
+/* Lumber: saw cuts, sawdust falls */
+@keyframes saw { 0%, 100% { transform: none; } 25% { transform: translate(-1.8px, -2.4px); } 75% { transform: translate(1.8px, 2.4px); } }
+@keyframes sawdust { 0% { opacity: 0; transform: none; } 30% { opacity: 1; } 100% { opacity: 0; transform: translateY(6px); } }
+.is-playing .i-lumber .saw { animation: saw .8s ease-in-out infinite; }
+.is-playing .i-lumber .dust { animation: sawdust .8s ease-in infinite; }
+/* Insulation: heat rises and fades, layers compress */
+@keyframes heat { 0%, 100% { opacity: 1; transform: none; } 55% { opacity: 0; transform: translateY(-6px); } 56% { opacity: 0; transform: translateY(3px); } }
+@keyframes press { 0%, 100% { transform: none; } 50% { transform: translateY(1.6px); } }
+@keyframes press-mid { 0%, 100% { transform: none; } 50% { transform: translateY(.8px); } }
+.is-playing .i-insul .arrow-b { animation: heat 1.8s ease-in-out infinite; }
+.is-playing .i-insul .arrow-a { animation: heat 1.8s ease-in-out .15s infinite; }
+.is-playing .i-insul .arrow-c { animation: heat 1.8s ease-in-out .3s infinite; }
+.is-playing .i-insul .slab-top { animation: press 1.8s ease-in-out infinite; }
+.is-playing .i-insul .slab-mid { animation: press-mid 1.8s ease-in-out infinite; }
+/* Landscaping: trees bend in the wind, one after the other */
+@keyframes bend-a { 0%, 100% { transform: none; } 35% { transform: skewX(-8deg); } 70% { transform: skewX(4deg); } }
+@keyframes bend-b { 0%, 100% { transform: none; } 45% { transform: skewX(-7deg); } 80% { transform: skewX(4deg); } }
+.i-land .tree-a, .i-land .tree-b { transform-origin: 30px 38px; }
+.is-playing .i-land .tree-a { animation: bend-a 2.4s ease-in-out infinite; }
+.is-playing .i-land .tree-b { animation: bend-b 2.4s ease-in-out infinite; }
+/* Paving: tiles are laid one by one */
+@keyframes tile { 0% { transform: scale(0); opacity: 0; } 18% { transform: scale(1.1); opacity: 1; } 28%, 100% { transform: none; opacity: 1; } }
+.i-pave .q1 { transform-origin: 20px 20px; }
+.i-pave .q2 { transform-origin: 40px 20px; }
+.i-pave .q3 { transform-origin: 20px 40px; }
+.i-pave .q4 { transform-origin: 40px 40px; }
+.is-playing .i-pave .q1 { animation: tile 2s ease-out infinite; }
+.is-playing .i-pave .q2 { animation: tile 2s ease-out .12s infinite backwards; }
+.is-playing .i-pave .q4 { animation: tile 2s ease-out .24s infinite backwards; }
+.is-playing .i-pave .q3 { animation: tile 2s ease-out .36s infinite backwards; }
+/* Snow: flake turns and breathes, flurries fall */
+@keyframes flake { 0% { transform: none; } 50% { transform: rotate(90deg) scale(.82); } 100% { transform: rotate(180deg); } }
+@keyframes flurry { 0% { opacity: 0; transform: none; } 15% { opacity: 1; } 60%, 100% { opacity: 0; transform: translateY(9px); } }
+.i-snow .flake { transform-origin: 30px 29.5px; }
+.is-playing .i-snow .flake { animation: flake 2.4s ease-in-out infinite; }
+.is-playing .i-snow .f1 { animation: flurry 2.4s linear infinite; }
+.is-playing .i-snow .f2 { animation: flurry 2.4s linear .4s infinite backwards; }
+.is-playing .i-snow .f3 { animation: flurry 2.4s linear .8s infinite backwards; }
+/* Facilities maintenance: mower pushes back and forth, dust gets picked up */
+@keyframes mow { 0%, 100% { transform: none; } 30% { transform: rotate(-7deg); } 65% { transform: rotate(5deg); } }
+@keyframes bob { 0%, 50%, 100% { transform: none; } 25%, 75% { transform: translateY(-1px); } }
+@keyframes pickup { 0%, 15% { opacity: 0; transform: none; } 30% { opacity: 1; } 65%, 100% { opacity: 0; transform: translateX(-6px); } }
+.i-fac .machine { transform-origin: 28px 31px; }
+.is-playing .i-fac .machine { animation: mow 1.4s ease-in-out infinite; }
+.is-playing .i-fac .head { animation: bob 1.4s ease-in-out infinite; }
+.is-playing .i-fac .speck { animation: pickup 1.4s ease-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+.item.is-playing * { animation: none !important; }
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+<header class="page-head">
+<p class="eyebrow">UI animation case studies</p>
+<h1>Suhail Submission</h1>
+<p class="lead">Two micro-interaction projects built with AI: animated icons for every trade we serve, and a reactive orb that gives the chatbot a face.</p>
+<ul class="page-toc">
+<li><a href="#icons-title"><span class="sec-no">01</span>Who we serve</a></li>
+<li><a href="#orbs-title"><span class="sec-no">02</span>A reactive orb for AI states</a></li>
+</ul>
+</header>
+<header class="study-head icons-head">
+<p class="eyebrow">UI animation</p>
+<h2 id="icons-title"><span class="sec-no" aria-label="Section 1">01</span>Who we serve</h2>
+<p class="lead">Every role and trade has its own micro-interaction. Hover any item to see its icon come to life.</p>
+</header>
+<section class="card" aria-labelledby="icons-title">
+<div class="roles">
+<a class="item role" href="#subcontractors">
+<span class="ico i-sub"><svg viewBox="0 0 60 60" aria-hidden="true">
+<image class="body" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACIAAAAOCAYAAABKKc6PAAADAUlEQVR42rWUz2tdVRDHPzNzznsvfa2V1FIakUpRUGnFxF8ILroQXeVvEUXE4iYLhYiK/ifiWhftQovFVKsgQg1RsVpso0ZS78u758y4uK9NntYYRWd17szc73zne+aMsBd79sQR9slxBj5HG3dQmGUsQ5wZRHsQjviYFA0qG2i6ivIdja3y5iff7KWE/GXk9GOH6I9PUv0hiGPgPZIIOolXhaLb+eqg3uGFQkvgUoGfqfI5/d7HvHJ+be9ETs8/gPIUEccRz2SE8CAhiHbn3Ygo4ApiQiEoBFWCdlxQW2eoH3D74EOeP9fcmsiL83P05BkSC1ASEBMFhIjARGir4zsUGROUcEyFfui2IkAywRWCQEy4Pq5EDfoZNP1Abd/j1Yvnp4m8PH+MLIsQJyjV8RqYKSYCNUgKNTa43lxCbY3Uv0ybr/DaysbNRpZO7af5dhZJRxC7k2z3YnIXRTLVA7S7MhNQU0aja4zL+7z95ZmOyAtPD9m3fgqTRcJh7E5PhGRK67+wVS+AfMTyp1/zT+25J2ZJmydJ8iimdyNiKJAQSg1G5RI+8y6vr6wmhteO4nI/XjvWosGIywhn6I8usvzFJv/W3jr3E3AWOMtLC/cw8CdxHqTxAdTA9Sjt1n3AauLqaD/ZDjGUQAOyrLJV3+GNz9b4L235wlcsPfw9Xn8kyyKtQPIh2Q4DKLmXyTJAHSwE1V+pwyv8H7a08hvV12lpMRWyKjkUIEELKCTt5qKGcLDpszQnfwu8ofEn30Hf/T+lh5rgrngJ8MTS47clyEDtkiICrwv09BE4DG3bvSAcbtR0meyJCA4QhAhVAgtBavxhN22fSwbPkE2QnTktsE7qPgwi4MaSaErFVFATcp7u0IAaASKIdOxMBAmQUCQ6n4gQOwtGUDwo1YlJzJAO0En0ZwQLxQs0xaF2QFG7LmvdxvJpjdFb7OmpbumwfLKNUQiBQmAmYEIF7ACJzRIYTqZSwqeUNZ1Wo8b0TJh0cdXd58InynVKdr6BgSo0EjRFfgdH4ldY5IDpeQAAAABJRU5ErkJggg==" x="7" y="34" width="34" height="14"/>
+<image class="head" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAASCAYAAAC0EpUuAAACw0lEQVR42pWUwWtUVxSHv3PuffMmM6kYJwZs0CClYmM1jBFUCtpCKUK7KgU3xU1BF25Kyc4WZmGhIOLf4M6di0JxU6gVii1S21VLKIoUlQoNSTvBmffuvcfFi0mmM2ntfdzFPe/+vvfOOb97hf8aH7/+GrX8A3L3MkF69Oxbrvxw/d8kOjJ6vj3DufYcAEITF3fgkpAzxjY3AcBH7RnOtY+8GPSz+YNM6BkmrA1AboILAqVBBE0GQCvbyUT9fS68cZqz843NCDcAvHBiN8S38eWruNjjrakuebYLmEUEDAhplWOtFXw+jWOOmLaTScF3D+8/x8g68NI7TVaenMTKd3FJQDbySKOrVMUTRF2kKK9z+ZcHg+kv/z5JKvdCWvuWVqKtgACaqilxEnF7h2vaz14iyE5EhP87oo1ThtYwVKihNPAqo/v5jymu2pcAzOOz+gaq8+Y43eIkPp1irMiwYKRglVAFUyNt6qc5wTlBgyCFUZaJIIY6KNMipXzpWcYjWkMKwwycVaIglXWKYPTLhFm1Thk4JzTEU0PInJIpiBpGRrLaRqqfzLXx6TRN3Y4miO5HyK/R+f6vkXVcmD1KLh9S14ygRpDbfP7T1cGaWlmQ7ClmVkXjDni6ZySwMztO7qdw4ghm9Mo+K73ucKMaeZdGtoQ4oRAjMk3kMAuHmkPQwvah6Vj1M2p4v0rNLT1/7dc3Zv0/6Wf3CXE/iqA4TOappyad/V/T+XWRzitTpMZx4DjYtqrVIji3TF5/OHyiAC62ZyjCe2AHBuLiBJOqLGaCRdvkhr+x7CYX73w1+kL59O4Dgtwk2ePKgAlk7dEkkIQ1U1R2kz7O7uIffbP1hQJw648nnJh8TNIW6ltkqkg0xEAMzAAVxHdJcgstb9C5tzqQ2JZHb+FQE5UDqB3B4i5ExrBUEnWJyG/k9Z/54s69UdJnicYEr71b0j8AAAAASUVORK5CYII=" x="13" y="14" width="21" height="18"/>
+<image class="gear-a" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAOCAYAAADwikbvAAAB+0lEQVR42o2STUtVURSGn7X2Pueql0itTCuLuNGHUFCCUSJENAiaBP2UIoIaOLBROIh+QH+gWQ2igUhSoGVQCQ7SpMjKdFB+3HOu5+y9GhgO6g5a4+fhZb28QrO7ObgPi5eBM4h8I4SnjE5O/435prJtVHHswieKdx1koasZJgBc79+NT4/SoptIHonFWVRP4lTZFCPEZZAXmF9Ay05ElhmZnt+S75y/iBXX8MFjhRHMiNEQFQKGelAnCIaIEOIMJI8cd4d6kDiAxF6sNEoM04C574i+I9E1RHagmkAEIkhU1H45xj6vM7Q3hXgArI0YIw17Q549ZHT2Fc+XphjqyRCrEUOClTkhviVtnVAAXM97VF+CQuJ/ksgcD+ZWt5tp5RNmH1GgIot4mWJ4cvVP2zMROiOpKqiyKfJPtQngveIlRRspwFYy3X0EN0ghRrAO2pLjDF9o3xZLd5iCGnkw6kU3QU5z41RVuH1uP1ZcIZF+UlGiGaUEsB8U5TzEnUSrUZEKLaJgkMsKdXnmmPiyxqVD7aicIJqRxUBWRKSsknIQTxdqHjUlRKORwEbrB6iOb/28nM/S7h6TuIxGPQM3QOmPEYk4p2hYJQ+vqbBA1D2EsMj98RVpOs9bfUew9CppWsO5jI0wxr2pJ/+37cA69XIJrJc0WcHsazPsN+0d2Ktsux26AAAAAElFTkSuQmCC" x="37" y="12" width="15" height="14"/>
+<image class="gear-b" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAALCAYAAACprHcmAAABRElEQVR42m2ROy9EURRG19nn3nHvCCPGIyI6IhGFiSgkTEHjD4i/QTXRUYhE4U/oFIppFSLRjESI0NF5NONtmLmPsxU3CjG7XPvLt7Kzod2szYbtsPlHKqUyRlfAnROE+2zU3v+G12ZDopc83R1FkEWMmUT1GeWYDrkAYPOsblid6iFwi9BaQAB8wMuqclbwPKGR3hK1qkL46UMrIHCGHAKuQdPckvCAAmIMge3D2hHLyfMX5QEfwyipi2nqEbvXe8z3PiIM4qJO+D5l66oqmc6HVAyJA0myO6zGoE1cqsQZM6yX+glYwtM5opYjkTrO3iCugDCOcQbVJyLv0OPmLWK4q0E+TfAw2KSI7/pwKFhAQN0XVl8zZWW6gDBEGBdAZ4jSCRJ5JefV8HOXfJiYndpdm6eMlUl1mTi9JB8dsH3/9Lv6AVH9ek3Qxs7pAAAAAElFTkSuQmCC" x="34" y="25" width="11" height="11"/>
+</svg></span>
+<span><span class="label">Subcontractors</span><p>Done-for-you takeoffs for all Subcontractors</p></span>
+</a>
+<a class="item role" href="#suppliers">
+<span class="ico i-sup"><svg viewBox="0 0 60 60" aria-hidden="true">
+<image class="truck" href="data:image/png;base64,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" x="8" y="15" width="33" height="32"/>
+<image class="fork" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAiCAYAAACJDyPYAAAA0klEQVR42u2UvUqDQRREz9y9BGNjb2VpYScKvouFryBYWgR8kTyPYmvtU4jCt3csvigJxJ9AihSZZlk4O8ydCwvLmh0f8ovE3ekV2a6ZWACYRx5e5uvgpAYjmdAIq+kn52AD7eE9vONwElNhi9q6Mwn4X+83dQZoi2ttNTNAX/lKdmKD/a/MX00UKC65P7vgw0V08GCcoiZPSXXT5e/JXCYRqSBC0KAC+qAgmmjSSrBY3/noLJlY6sw17t8eTyWQC+Dm5ID56zu3TNdOdnQuZs9vn7mFOuUcW5MqAAAAAElFTkSuQmCC" x="42" y="12" width="11" height="34"/>
+</svg></span>
+<span><span class="label">Supplier/Distributor</span><p>Accurate &amp; fast quantity takeoffs for all suppliers &amp; distributors</p></span>
+</a>
+<a class="item role" href="#general-contractor">
+<span class="ico i-gc"><svg viewBox="0 0 60 60" aria-hidden="true">
+<image class="tool-a" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACkAAAAoCAYAAABjPNNTAAAFIklEQVR42uWY229c1RWHv7X2njPjJB7fZvDYVnCMQBBETOy4ddz4rX2goBAJiQf+DFAECAKKVCEkkOCBf4JHpIZWqtqKksS1QyRokKJEFDDC8XgcO8mME3su5+zFwzhJI5JykWYGid/j2Vv7fGetsy57CXfTsemH8DJCZtenvPz3Mh2W+96TV/Y+RmTPApPUal38Nvc1c6XGLwfypUf24fQZnBvBice5YdJ+FwcGvuokqLsDEDuCWAF1gqlQS4TNOE/wOzmUX+wUaBPytYnHScsRvI4gAigEAQHUpXA6hI92Mj3QEdcrx/c9Qip5CmUE5wT1AgEksdvbLI2FaaLoMEfHd97ztBcPdbfGkhO5gKcX0VFMBAMwQMAEFCHtHF49MRG4CqeXL931tNPf1ltjyXfPXyGO/4HxMSaBRgiE7VURwcxI4kAcG7cW2u1ugDcvrFOO/0Y58xGNLsOlBRQsMeKGYQ1DAe9TpKJM56J7/vIWM7uLpMWhdj+iihfFI4gqEkDYQUg8+/OXOFOqdCZPzi9tMbW7iDOHyh4CEIIh0IQ00DBASvuZGbrE6ZWNzlSc+aUtpkaLEGqE0I1YgkNRc4gBJliSQ5MBDuxYYr58vdWQ8qN2Hd/3ACH8EZXHcE5oJIEggVjOE9wHvPXpcnsteTd9tHqVvX3LNHQX4gvNeFMBlwPJMzm8wkKx3FlIgLPrG/xhz2XE9YArgAiKIORIW56J/iILl8udhQQ4uVzhN8MlcFmEQcQEiUEsR0SOk6sLnYcE+PdyhcmRFRw9OCvgTXAIf/r89dYm85+q9xaW2KqeII4/u1WZWl5xfhbouSU2b3xIvfEZ1o6y+LNB/7uE6l8IyX/uuefo5Di/Bklb3/bq2ChkhqhUlnjv0lLrovvH6OjkOHPF0u1m+OFuDg7+HpLncI0pfOZBJvtusHC12DnI/wV8e3wnVWbR8CReM6S8ItaN93km+iucWS91BvKmnp/pIjQO4sITeEmjHkwMp6A+Syo1yPRI5Y6PaivkOzNdJDdmMHsKtS602UDB9gXPHKj2IMkgU31l5tdW2w85vusQZodxoavZjwqYVsFtEswjqmCgcbNyTWXLzF9dbR/kqzMjZHSGKIzitzO9uRsQTtKI38dF1zEbQ8xDALUenC8wlburRbUlkL5eA7kOArUQCAJIBvM9NKIq1eocEv6JWoI6QR143U1X9DQvPD7RHkv+q7jJ7EidJBlCrLc5cBAF8qToJl3/gi0WcZoAY5gqCKhlERtkKrfB/OWV1v+THy+vc3CghFgecf2IB8GjNoRKllR8kS0WURcjMnbLq5Z0k4Q8h4Y2mFsttT4Fza1dYTZXJEn14/x9zcuceEQKiHSTii9StUVME5yMoTjMgJClHu5jMrfB2fVSayEBTq1dY/9wCejDSb4JYUrwBYiyRLWL1G0RNEZ0FDGHipDWXlIux+zwtdZDAnyyUmaiUMJJP07yiIKYw7gNWrNv8E5AHmyuCyAR9Ua5PZA3Qff3lnD041Lbrg8OkQIWZcmkA2YHwPpuz8mkSiJftrcLAnh5/x7MHSYKjyKNZhI1mmMcQ27NmxKpYfoJ2ehD13bIUyvX+N3gVRIGgT5CbIgXzAkWmpOSOKlCOEMkf+bYuY32QwLMrVzhYP4KKYbw1ovodl0HklAnJGdJ9ARvXLje+hT0f2+dq2vMDq41g8f3Yl4wrUP6LCF9grc+r7SnVftB16+uMd2/TOwy1FwgkQV2bP6VN87dMQj7Dm52+uhmY6J6AAAAAElFTkSuQmCC" x="9" y="11" width="41" height="40"/>
+<image class="tool-b" href="data:image/png;base64,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" x="9" y="9" width="41" height="42"/>
+<path class="spark ghost g-line" d="M29.5 2v3.5M24 4l2.2 2.2M35 4l-2.2 2.2"/>
+</svg></span>
+<span><span class="label">General Contractor</span><p>Accurate and automated takeoffs for all trade</p></span>
+</a>
+</div>
+<div class="trades">
+<a class="item" href="#hvac">
+<span class="ico i-hvac"><svg viewBox="0 0 60 60" aria-hidden="true">
+<image class="frame" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACUAAAAmCAYAAABDClKtAAADmElEQVR42s2Yz4scRRTHP+9V9fROdIdNFjTmJApKDgkeouAhoP5HHiIEPOTuwbsn/wPvngQRV0FQBBGF3IIIkuDsj2zPdL3nobp3amdnBtloTx400z1dVH37/f4+oZT77+zzNI0YmTCYXIHpYYtVR3z2wwlAPvyjN3dh9yZRb9M2+4iH/x2LAapgCsmPGMlvNKff8+kvj4UP3x0TT+4y4n0ie+CQzMFA+x10w86XAaTQuhODYN3eEWOm37IjX0Sq5lXqdIfAHkGy5sTA3PN9/98GfAYYeb05uPlKMCHkXdTAW0dNUAFVQSQy1rdp/ddITNfBdwki+UCZovqE5AmfdcBUVitL86VAEl+v0eUvSBDdiSgmE5R9RCF5wHgjMqdCUFIyNCjG78zkAI+n/848FdSFBuf1+qU1QAPEvPUMcH+LSj6A5BCEpOMIqfsAy4uJT5ikh9z78XiQ4Lt/6wbWOgiIO2auZzY+03xga2IX3FYFA1qA68MBicvA0hrP/HNoFck6TZlfNu08m8xXxvRC3B1PPiimWeMspTV91uT8n/iUyhpQ/Z0EGRSUFucVuXgRfX2ZGVxbKmhfNUIRkNpV7aGl6uprUDARVGXJpyzb+OWBgy+5k5J3JX0p+rbh7O3GfCpOcnDg3pfHw2b0Lkd6Wfs2pf1BZFWe6muemWMz55PbLwxqPyubxbPap+DibC17bioz25BqfCHCtg9qXsDQVbqzLVlQC2VpeA40tcJukefCfrFnUktl5hy5G7j2rY0+Edma3+uqx211CL31rOh8zTyeHzgAMrQNK7CuBfflMoNCqHRrvK8fdOTuKXR3qhmiXWVavcbHN09pgLqg4Q1QNx39Lv5bSc/rFe+bckF+jkcvkca5De/GYpHWGipJJHfcwHkdt2tQGaOZIzPOhhx1Tm7nWJEWpi9dIaRMbitfZOQUFgtUBa3BmZDEqTR358GbCNUjJE1x3yMlQCfApAOSL2DRQ/fEsaBiWqhfLfuGq+ZxklzklIoQPEe77EA0pwqCB2M+fxg4+OMxd18Zg9xAdCdv0l+hwyAgUSEKBMF1QT0M8ADevUNBKgGRjE7IZhGwABI6TiWC9O+i4Gog35Hqr3P0tU8PkPExqrcwvwquy0USKcmZ5FbHfLGgH5OqQCuCejY1dJPBQptBBbXFQM7lkJafmfhPPPjmcHHQg/d28MMX+ZvqcoPYK93vySUiL7X8dW3K51+dAvwDyc9W9ZFTePYAAAAASUVORK5CYII=" x="12" y="11" width="37" height="38"/>
+<image class="fan" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAEpUlEQVR42p2W3W+VRRDGfzO773t6emhLBSoQQMWIERMiVkH8SIyJcKFXBi/8L9REScDERrwwksiN8T/RC9ELQxBUhFgJhEQRpYItlVJ62p5z3ndnvHhLT6N81U022ezXM7Mz+zwj3Gv7ZFedyxN9xKyXmkZSSpi2uC4zfHa2ebfjcleA/cPrSPMPk+t6xAdIXkeJiCeQFprP4HGCjv5BK1zi8PH55QG9+2gfVh+mHrainY24D6AG9q99IYJn85j8haXzxPwUI9+N/fu6cEuQN4fX0RtfQeQZpNyEpB7UqzUHzEEWbIyiRGpoGsR8PSkN8cKGeY5enrgz0Lvb11NPewm+jeC9KAIGEgUowK+RmCQxB6K4Z9UeByfDbBXqa9m14QbHrkzcGmhk6wpU3yD6VoSAAIKTuE4ef8CKr0mcJPko2BmMcyjjeOjBrYEjGILElYitZsfgnxyfnP4v0I6Nr5L50whaTZiRdBLkGGq/Mjc/RaoXeDA8Jkpp47GJ+xQx1BEdQDWACE4/aM5zKy9w7O9OXAR5b8dDeGcnZUeox+opkgliAwSewTIjazgpOZkKCScIBBEUBfrBA26OJJAsILKNVuM0MNr16KnBPTR0C6kDWVDMWsyXV+mkOQqBTumUDuZCmYRk1TOlUigTpNSm9CYugsasMkAyzAPPDp3velQLWzETNIciLyntCHWOM970e/7UAwD3b0PDbsRWoYUj/hiUfRXQweGHKTsrcHdCEFwMl+8ZOXuN5baR+37C9CmEVWCQSQ/E9RXQTHuQuivqVSrHzlV0epa3NtSXDcREB18zBVogHslUaDMUObS7QfOvfrwU3B0ELKxDhw5VTwEYS37rrfhFpOIYrzYEVygEgpDcgEY3RgqYLAwALwypKRTVYTe/LZAvWQgiiFTkltyrOyHyzpezHNjSJGbepT6dQCY/ZvoBh9rC3KV7TAgTysG9aBgGcrQEY6byKOkEcQldig3S7m1w+PjVZYdo3+YB6roayBf9tOJal70P7DxI7mugDWVZYPoVcyuOUms609NL8/fO7T59nIw94KtxoCNzlMWhbow6Okq0F1ENiATQl8hmn8CT06gv2FZ2A+qxMlJKX9QOEQHpw7UXT46oYP4LDZpdoPnWMbIwTGCAmCviOZG1OG3MpiqhYzENofTuWBTVPvBexKpsEgXTNsJJRs4uAfr09GXe3v4tdXkZJ0OD4G4Y02jtBEVxCaOJx24sSxNqsUEIazF/ErEH8XRTVpyyHKWndf6/7P3a0BituBG31YhCFgNoL8YQeWZE2qQyIREsZdToR/PNKDtwNuIWcKtE0eV3RD/ng3Pjt5by/cPrcHsdDY8QiYgKqfAFGe/gPoV4CyPHvZ88NBb/HglICY1jWPiCkVOjt1fYo1eaPH3/GDWp07E+jHyBmpwiKcoKIitR+tCUgQpyE4hZTM6jtSO8/+OZu9cMJ8Zn2FX/DWm0URVSmRFCD6JCEAGFQhzjZp8lcZHSTlLEb/jwxwvLL7f2Pb8Ju/EAua4l00GS92AWcU+4tFC/QSrHIVzko58v/P+6bmkBOTnTTzv1kElGXCggc5lh5O4F5D+CoRpoI/QaoAAAAABJRU5ErkJggg==" x="17" y="17" width="26" height="26"/>
+</svg></span>
+<span class="label">HVAC/<wbr>Mechanical</span>
+</a>
+<a class="item" href="#concrete">
+<span class="ico i-con"><svg viewBox="0 0 60 60" aria-hidden="true">
+<mask id="concrete-wipe" maskUnits="userSpaceOnUse" x="-20" y="-20" width="160" height="100">
+<polygon class="wipe" points="13.8,-20 140,-20 140,80 50.8,80" fill="#fff"/>
+</mask>
+<image class="flag" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABsAAAAVCAYAAAC33pUlAAADWklEQVR42qWVy24cVRCGv6pzuj2eMcEOIeEeBVsgRSIsEBI3KUQssmTDU/AGFhsjEEGw4Elgzy4IIiIhFGFQlFhgj2PHFyV2fJ+Z7j6nWPRc3LaFjF1SqftUV/df9dd/TgsAU2/V2VkUdFRpBaFn9afL+71N4xlgzxl1ZzAcYS0y1WzzP0z47M0XycJ1YjGGSR2zGliCQ1ArwcwFJOYIbcy18HEbJ1uYbFDTx7R1jZBtERsFw+RM/b53FJjHQkESG3gbR1VQAWyQEXs32r0Go0wqrQC0MArdQPMV8vQhk+8sMpQvs9na4bu764POACbfuIrPPyHx/lA58eA6GqJCD84ULJbVRQUciBOgTTufBZ2mUfuTqV/XHQAfnBWMS4ieIXYBem5A2LcOGMi+IrosFB7MDDFBgkDwOM7hmSAwzEevNUuw914PJKGB8SqCICoVKqXrBohIhdWqAgSNIIHBzIMnoUGerZVgtxYyrp5PMcZx2kBFMLMjPjbwfkwFEUEpvawIJELsVhhMybPNQX2aLpPaTEmRlXM5np6PLiLqPmGZEs27/sOflvd4/7k6xjgS0wqN/40m1U5FQKpjMNkGm66qb08WaNgcqlf6yht0YARmUVsCVdQ1wEbIGSHKUzgaVdX2SctQnSfEe66ScHt1mw+fH0N1Ag2uIvsYdwn2Ix3/MyGbwWSWNJ2jnc2R6xxmD3E8IViHPGq3s3Wi3sW5W3z9x/zhfdXqNKn5RRyXqmxFwScFN6Z3u5FtYLWSMznxLEUySgyj5EmK5jvU0hW+vLPKgZGW9unlEc7566hdI5pWaFRtkukSRdwi6jr10ft8fvPxcc9Gdyjy26OMaxeGifYS6AhRwARMBOIYoi8j7hW8XUSKi7x7/hG/rGwcB0yPjHayeYI1y9NC6Xv0YAgSh4CzBLuM52O+vdI4OdiNe2tkNkvQTSJWUWVP3iKCimI6wRM/fnIwAAn/YLIwOBQL0K5bbuRZRAOYOdS9cDqwb+4vkds80XfKX8+Bt2qihI6RdATZ3T0dGMCZkb+ppSvUhhyqUjapvUYNDCQJBJ05PRiLD4i6jHhDUoGkK+AEnBNcYmT+e776a/Vk0t9vNzcK3r4QUVoUcYPcdmgTyC2jkAcMyQ98cef2cffZv8PdehjzVExdAAAAAElFTkSuQmCC" x="26" y="8" width="27" height="21" mask="url(#concrete-wipe)"/>
+<g class="trowel">
+<image href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAgCAYAAAArBentAAABnUlEQVR42u2UO2tUQRSAv3PmPvJgN/ggKRaCIAgWVsoGsbG2tPYvKKRLurRJ4z+xtRGSQrG0EsRKlARUENbHbnbvnXMsJpq9d3chWHu6mfnmzMx3ZgbasX33Mrv9G+3u0Gjt3V9Cfj0ip8/WeuDV5w9/hrQB/vzWpYzXya2H1jenh7IGeKkKRBXcHKFYDAKYAjLTrVww/oOtiP+WMVXm8VaX5VGX6BsgabJQ8uT2JqGIPH19nGq1e+cBHm9R1iuIXwVVjDE/+IJmIzrl88D+vQ4ZD8ltE/dVEPm7mmmHQteI+VjxU0VMwEGkeRu0BgyiZcrxwJlMjGpsmPvsyWtgcnZqc6eOTUgMpHI0XkCPBJn1KHNAO0eUlTVBRQihifpZDpMp4UEFVBZXOUy9GQVq81moDS5KpgZElOEgZWnLxkARggmZitK7JuSZoHP2qJJsxNqUnRcDKqswfL5LdYowTA6+n75nVA+Tt9ZnYFlFmb9J4KofUvEJFUMVVJO56JHh+JCdlx/Tb3b0dUS/944lAfwKQoGHE6I94+DtEcBvAqGKYAvdDFEAAAAASUVORK5CYII=" x="14" y="22" width="10" height="32"/>
+<image href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABsAAAAdCAYAAABbjRdIAAAD9ElEQVR42q2XTW9UZRSAn3Pee+/M0NKBlkpKKNCh2I8ABksAowsS49I/oYk7FxojQkjsxqQEF/4aly6MRIXgZwLBGIOJQbExUAvO133PcXGn0xla6BR4k7u4855znnu+M8Kg51ytSnn4DSScBN+J2R/Um19y+daVQU2EgaQW50eRytsEXgatgAjCLoLPc2Y85cryrUHM6ECwh9nrIJMgAXMvnmi4B8rpWS6+OvN8YOenxymX5jAy8miQAzkoQilR1FL8v1PPBxbGFyjLLtSACFjxmDm5OOYB9VkuzE08G2zx9AhJnCfmFRIElQ6wcyR3MJB2BUlPPhusbUdBxnETRAQA61ExLUy4lBCOc65WfTrYe69UaDSPkOdDOGDuALj5BllB0LxKwrGng+nKFGk4ADEhuhcQhRCkUOv1MAHCDkLyEosLO7YPS5M5Et8NBh798eodE64BsglaPr092OLCAYJOAWXUKCoREJV+j3Q9hy6OJcNY49g2PdN5gr7QhayBVARV2VzHwPIUsYNcnJkaDHb+xDjRargNFS3V+Xo3x90REdKgHTgg6zBFSHUUDccHg7WZhnwCdd2YF4w8v4v570RfwYN0w7gmJlIBr/HJ0b2Pmk763t6a2Ulmh3GrIlLkas07lztkco2G3iGXJi5DIC8SOAVUsC5Mafke6vkscPfxsNHSQfBJVJK1yBT5Cst4+JyPr3/XJ//Ra7eJzRVS3kSsyKcCiY7gfoRzCz9w6frK5mEs5YdR9naS7YViUDKusie7uSHkS1/dg8a3RLvdP081IZV9SL22ec4+mJnC9RBqWd9kaMUG5rd4/+v6pkW49PM93G52vVobYapjhGSWxbPljbCdpRoZk/0ZDYJqi3raeOIMraSrxWTpHWGaIbqf3Cb7YRfmJlCZRnWoKPWkuIrRacdIu+FPHtjRyN2xXqBBsH3o/dl+WCjtJ48HioLQ9SszJ7pvufNyIHb6sPtbdFqNlNie5MMT+wqL79SqPKhP0cpHMPNuCXbXh/mWniW9CQlFoydBSBMlyn7a8XABG9s9QTmrIa7rtd7juKiQloVtn26EqqThEO+eHklo5COkPko59A/ZtYYe6ORgGQTpNGcnEIkKmikxHUObo0lhNbeuwPM6IgLqCJDhhGBKqXmfLC6ve22gOVhn/kiQp4KZOybgYtR9mQftf5SlG7+Cf0/UVfxR94yBYmn5emG5ggtEdfI0QrhN9B/59KeHxQz8e/gbhjRSsjNksYpEQQBpOGb/kuRxC1wLa93HEvBUIAENRhr+pGlfcOnqDXqWUWdDnx2mvjpKGktEL+7q9ZzPfvlty/8BmnVWSglC2WnaKpev/dUr9j/D0ZabE8lFVAAAAABJRU5ErkJggg==" x="6" y="6" width="27" height="29"/>
+</g>
+</svg></span>
+<span class="label">Concrete &amp; Rebar</span>
+</a>
+<a class="item" href="#steel">
+<span class="ico i-steel"><svg viewBox="0 0 60 60" aria-hidden="true">
+<image class="col" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAVCAYAAABR915hAAABo0lEQVR42rWVPY4UMRCFvyq7Z2ZZwS0IkLgC4gocCAICIu6BxCmIyBABgoAMEWwKaLWwmrbrEdjd25u7K7K7JX9+9fNsvHzygpyfMceJ0zFxywfefH7PyHj19C3GZdvYR0zfnbBrHBAQzi6hyTabwuuvnxopJFJ25CB7PhzsetAWGUjLKkMtIiUj5mDChoMtDGWhbEQ7vik2N6IGjjFL41Md/UzfKM6p7csMgXDdjleMkN3LpC9/AJjPgdUv47tr6mICqFuwG5eHxHRwqv8dn2oXCOyujB0cooTYK1Tb2RHrp0wBkkRRIAnp4XBwVMcMdLCluXpXmzElRwbmj3doriMeYGfBv3WiezokyAbxaLyBVAcH36Z6BXf9hZ1q3We4LgayoOe6XOfPDuMUWLLm2Wmj2AVTcjAo/mN8jacZI5OA5NbBtQ32wYwC4Dso3hR3NZCypFraWOlgxRWoas61NZC6o3l0VSC7/0iQgMLdbdJO8NpscwWXuCZ0ReiCUo1y+j1esF1hdtHe4vjVwKFvyH4S4ZDAzjfDwef5HXb09lD4DcB/NBGtLDYxzMUAAAAASUVORK5CYII=" x="16" y="28" width="30" height="21"/>
+<image class="b3" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAANCAYAAACpUE5eAAAA20lEQVR42s2SsVEEMQxFn2QtS3QDNAAhOUNIdE1QCkNAUfRCSBfMcNxZFoFtFnY2dIAS+8tfX1+2YWQ8P+yNp9sbAGwn5GNsMw8rfL5Ny5+XxjQ/QgE5CCk2BBV0WmABiL/nPc58ZyjXECCxZrZwEBUEQCB14da8OBQPpqRQML6iYAjau/9qXNoaJQiqMA3/mCvgOfCaM5K8I1K9iS9zKRBa892VS9t0p155s7UyuTA8vWKn1ZinKqRzhf0i1BfK1vP5fDf01/Byv9exipmxgsn55w6zfQwe+ertG2aUSBlxg5ZoAAAAAElFTkSuQmCC" x="21" y="36" width="20" height="13"/>
+<image class="b2" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAICAYAAAD5nd/tAAAAoElEQVR42q2SOw7CQAwFx15DgJ5b0NBBzX04AodAHBRRAFI2fhQJEjR8pLhx5Zkn2zBmHdY7HxVYIdivjjTlHZxD/6TLBHcoZiTQSSALltMptQqlfo+Sg7TrpebGJBxJwaWtzKJgDjJD0leYD+kzIQXtvaOWxNyCJs94axgg+A58rsMM9x4cpU8pNUEsTkxuLxD7/xizeT90zQ3jvs129wBQYTcbaNqvAQAAAABJRU5ErkJggg==" x="21" y="28" width="20" height="8"/>
+<image class="b1" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAHCAYAAAAIy204AAAAsElEQVR42q3OMUoDURSF4e++eRqVmLHSHViktEph5aqs3ITgktyIFrF20CIz71pExSZg0L85cDj8nHC3fFAgmimftXwUB08242QXx60wO7eZrkRckkdqF7KqFBoiQ8SZEity5bDb6TN1aNQ4lVnBmClb1O9RRmAhLEi/Im3FUNBk8We+FI0yqt7H9c9uP1G3jSlSN4VZzKvh7V7/uRn2fddzMQ8vQ+pfcXLtX7ld3nwAA501uw4xDLIAAAAASUVORK5CYII=" x="21" y="21" width="20" height="7"/>
+<image class="roof" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC0AAAAVCAYAAADSM2daAAADs0lEQVR42s2Wy29VVRTGf2vtfe7tbQstULAtYCCICVVroTxKixQFCSYkhujAoXFk1IGaUBMGpuIjKhGMI/8Bo2ON0cSBN0qJhodMEBOUOADKq0H6ur337r22gxbQAYHBLeVLzmivrP3b3/nOOhtmS690NM5Wa6l5x8FtdZQmVlGpPkSSyzSPnWLwz9FabuFqCvxhdxPliXWktBNhLRqXkXI5djx4neKF8fsPemBtO6nah7Idq7bgEXJaj9NlRObTt3ySw+dH7p94DKxbg7c+fOxEo8duLOj0Y2pEdxYYItb9zsdDY3Pn9IHOBtYv3wjlp1DrQE1nbIgIZUSA5EgmEBeQpA1nGU8sGuXnyxP3HnqwdwmToR8XtiGhDUngnBKZIskZRI6CXMekCYs5LIGmBjS1Y2kem5dMcOTytXsHvbdrNVSeRlMPGhpREXxOMR0lpGNY/JH3Tx+nd+kwWBXxTWQ6D6+Kkke1FecW09tqbFh5jV/OhdmFfu/xLUjaMR2H6G9m1nJXCBQZqxzh0B/DABy+OMljLRdpyI/ipBFoApSIEuIiVFrJUh3bV4xQPFeqPfTBzQvpmr8TTVtRloLJzKccMf2Liv+e6qXf+Ozs/2fy0SsVfho+z5bWq6h5gizAoscsUciacdJOhWZ6W68xNHy9dtNjb/cq6qyfVO1AYoF3T79a0/m+r/tTxP9NxYocOHryTuV6x4Zvbuoh5/cg2oX6esTV/i9qMSOF1eTds7zV88ydyv1tVz7qm8doaRvVajdCCwRltpQXRZxQDa1k+iT71reRNX7NO8Wrd+/0QOcyxkvPoWwlC4txwaEmYKBae6djNSEBYsWwqQaIXYR/XuT1R9fcHfT+9Wtx+jwpdCGhARcEMcj8TG0q1RxaoxGnDG+CNyGLGd5W0pS9wNud228fj8Hd9di5Pqy6hRwLiepunstIVMzQTKjEkzWHFimTKNy0UGY2Vl2CyS4GOlqpr3xz47Y4XbZv0wPYpT142YWkxWh0uDQTA50EMaIlxATCVM2hg9l/Xvqt26AkQUMjBTYynr3Ey10rps/02saVFNiNVB/GlR35JCAQfBnTH/jg5LfMhQY7D+GkQIqJUE4kn5jQi0yE75RCKuGp4C3DElQkEXQEyX8xZ8AAlA9QtfMEhOiFYEKWhIa6UceRC+P0LCrjfBs+aybLzqDZl+w/doq5VHFkjEdaToA2kdW1U86PEXNFDp44dmt87d3Qj2ozIQzxyfGr3E96Y3M/JWvj81+/AvgXDkNtYYbBFIsAAAAASUVORK5CYII=" x="8" y="11" width="45" height="21"/>
+</svg></span>
+<span class="label">Structural steel</span>
+</a>
+<a class="item" href="#plumbing">
+<span class="ico i-plumb"><svg viewBox="0 0 60 60" aria-hidden="true">
+<g class="wrench">
+<image href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAiCAYAAABIiGl0AAAEnUlEQVR42rWW229UVRSHv7X3npm2wBAKlLZCSCnGiBJaKZdKlURQHkx8MSbAo/+BPhiVEKtRWh6MD/4VRhMN0agoES8UkCD6QAWETiloLaAol17mnL2WDzMtrdFAZ+CX7JyXffKdsy6/tYQ71ctdC/Cxjmt6nXePXqNK+Tu69WJHO7Wui2LxYVzaxLYW5eDFK9WA5bY3XtqwFNHnqZVmJoqKSEqQAol9znhNgXcOj1UCdre9kWUVOWmGCSOrQiZmcHEFNbqNuaMreKGz9t6ALckh0cDA1DA1sEDUFpAnWZS0VgK/fY43Nkc0WY1IDrNycpyg6hDymNVTw1+0L7/OkYspAN1r61i/cCWdjY6+kZuVgfuGr9K5ZJyiLSdYFicCAmJg5onkwerJJlf5ZuQyAJ2LN+LYgvdNdC4boe+3G5VVdd/IEI83jZP1reCyYICBd0LwAWIeo57NjRNsbX4AL08Q3H24tIEancPmpb/y9fDo7MEAh0aG6FoyhpcVOHIgQlQrhV48UfNAC2m8H9xCci7gNYOzxSDzaK+/wJHLY7MHA3w7MsSW5nGyYSUqWVIxokBqholDpQ6TGhDBopEaqARUGnAuT0fTeY78Pj57MMBXw0NsbhylmLaQcTm8CMHNPF4EcYIJmBfMPKINZHQuW5ad5eBw4iuynbWr/yAzPoboCiCAApHSc/pxgtmkVQWcNDEREw5dOlsZuO9cQmfzn+TIINKKIIjMPIiACaalQhQRgguMay3blh0Plbv8aCsxrGPql6bbkpb63TDSVBEvOAc3MWI4T/fx0crAu9e0Y7YdYR72H2AtG6KZkctdIIYDiDaiJISG7yjlZ5bqbmsjidsppnVknBJEpv5yOhSvmD+PhQ946/tCZQYyHarsxEseh5ANfjKmiJWKSRDMKzEMEnMfsefoQGVDYiq8D60h2g5E5k29aWa3BquVKlksohRQv4/ew2erWwS629qIbife5UutUa5SAFUrAQWMFHwB5RP2/HCmuun0alsb6nZQjHNwJki8BQWwOBm8FGUAzX7Gmz+eqm4s7l7TDpkdOPKAkMMxxVQgNUzBSDAp4LP7eePEz9WtPq+1d5Dqc3iZBwqG4MpvqBougiagWkQzBSb8F7zd31/dItDdsR6zZxGZj6Tlqo2TvVkuIkAlIdoAwQ7Qe7q/ug1k1yMbwZ4hSD1JNFzZH1y5ZaS8hZgkqAwQwwH2nD5Z3c61a92jOHsa0QVoamg0dDKfU6kRzKWoFJDsl+ztP0lV6+3utk3gn4JkEaIyDTb98wQnKco5Jmw/Pf39lVp9yTK7N3RB3IrpIkzlf2OiJKgr4MJ+ek5UDC2BX9mwilQfI9hi0mIpBm6SWJ6zCkiImBsk5VN6TpyiSgXS+CBBGlAVDJvZYAYxMVQUpIDGj+k5dYa7oABxPuYzSITwr77WMt10EE320XvuLHdJDic3cJqCzhxtEUMxEj+IZj68m9ByIuNJzP5meteUNgiBMEQa3qf3zAB3WZ5DI5fZ1ByBRlRq8d6RChi/IDXvsfenIe6BSu2Uyx9jdKyAj8uJNockXqLOX+T1Y1e4R/oHFm8BcbKKVkYAAAAASUVORK5CYII=" x="14" y="16" width="30" height="34"/>
+<image class="nut" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAMCAYAAAC0qUeeAAABNklEQVR42n3RvUoDQRSG4Xf+djUJNqYIgqiVIEQUJUGxsfAeNJdgJwiioOQSvADF0qsQ7MRKC7UStVBEC4mRbLLZ2RmLkET8O9Wcw8MM8x34rzYWBr+28k+4PrlM4U1Tnct0R+pXuDW9ilRL6IFRosY1K+Oa0+dE/IC7xQrCl3AEGGOJ7RW2fUwml6ofMJRlvAgRQuBSiTF5gqAA5qaPd2YqKFfCiZAoSQHQWmERNNMhWnHQ+eDe/BrKlUkJsQ60kMTSgwIlPcY/4Ronks3SBDIt4n3Yz0gKclqhpcfaewJ1xP5DTZI1w3iv8KnvYSEECEfUusXIA6qXtU7OH+8veJoIPNL1YdK+I9CHXdjJ+ey1zuJIDqXztK1HyoRAPaL6N/Ye7J22Z6dw8RhORWQzF1TP699X8AkBSGnzXrgBOAAAAABJRU5ErkJggg==" x="16" y="23" width="11" height="12"/>
+<image class="jaw" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAPCAYAAADphp8SAAACCUlEQVR42qWSz0vTcRjHX8/n89ncnDOn0WyWFEG3QDq4lppKt/4ao4veBt36V7p1DIPB0OgSgoJ1KcI11yIIHSv33ed5OkyyUi/2Pj4/XvC8349wnqpLI/w8mESGpsi4NGb70G1Q3fp+1ricCVmZGSOtD0iFOXy4RBAhap9E3tBPrfNso/nvij8FWb1TIGNLmFZwMU9QAQMnHueu09Ms8ze+sLF3eD6oWhkn9BaRfgWxUTyCKYiARiNRA1fCa47F6Tb1xuFp0NrsBHa0gNkAIgK4wfVmgAEKQYRACbERlostaq3DE9Da7ARO53F6HxgdOCdnO+oQnBPEl4ghT7n0mc1mx7MyM0ZKFvDMYZZHo+H+pIhigBzXnAip4AZn2lX6MUf55rvAsM+CTiI+D05QDAW8E8wSsF0wwdwtxLKoGkmimBk4CNxFf2x76vsdHl6LmIzjKeBFCN7hJSKyg/CSyC7qh0ili0DAoiEG0gcT6FsYeFRrtlgudVHGcTaGkIDbxsI61a0P1NsH3Jto47NZiFdAj0MyUOCIcJJardlieapL1Bymn4BXVN9+/N3f/NphttRGYgasiOAHSXqhJ0d//1Gt2WKh0ELje57uNE6lttnsUC62cJZFpATmES8ksidcRE9uX2Y49wjtlelhkH7uLwR6/a3L3HSD2M+gPjKSvOC/tDpf4HFlCuAXYMHQ3UbJ8QAAAAAASUVORK5CYII=" x="29" y="10" width="18" height="15"/>
+</g>
+</svg></span>
+<span class="label">Plumbing</span>
+</a>
+<a class="item" href="#civil">
+<span class="ico i-civil"><svg viewBox="0 0 60 60" aria-hidden="true">
+<image class="gear-a" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAVCAYAAACpF6WWAAADU0lEQVR42pWUz29VVRDHPzPn3vde+0rpj1BKUrUaRSACtUWRRE2VlQvds/IvMOmCGFiQvEQ3GoOu/CeMG7e6IIgFNVQk0KTRRKhUWqGQ0va9vnvvmXFxMU1DfY1neU7mc2a+850RdjofHO+l3gzUegSAxuUHO4WEHaFv7H4f1ZPE9nHy/FUmh9t8v3SnU0jSETg11ke9GEWlH8pEyeJ+4EqnMP3Pl8ZkjUq2H7Sy5d55mqmxvk7Q8vvzJ7q4nx3ErQq2TKZt0vAsmr1C4s+gsilTYTmi08TKDaI/IkovabKbUPmbjy/+tgk9d/gwyLsUvg+XZaTSRG0fGmtI7ui/tQPmjqsj6ToWlijCXkSqiP5KrH/NJ9+tJDTG+sCP4gyTWsBkCCLg4NExWlhxH/UCk25U9yCmUPQgYReplSq6Pk9sHgUuBl4bGIEwQaJDZT4GrmURpgvE4jJJ+BHPb+K1eVTbSDKEaopYqbIDIinEJidfmEuQnoe0N26SSj/KYJmlQawuUyTf8um1n7Z04cMX56j3Zqi/heVgEdwyVOch3KBxYSNwaaHF2OAiPVrF8r1IUXmc6RXyOM30Ur4F+sNyxuToPQp7iZh14RGweyT5N3z0y/VNS305u0ZWLJAX69jj/rnd4rPr69ub5q9HZPk87WjkhaGs0ZidfdL8roarg4Oo7DAWlDJ1Mv/pI3USfQqkTuGOKMR0lNNH6ttG+WAPlTBKQAgiuO7i7KFDm9CpsT4qOonHY4jW0aT0pMjLhPS5J4DnT3Rh/jaBfhIRVAVhgFB9hzPjE6V4jYkD4O9hxSiOkIjgOJ6CskjkGupzQJO0NUCsHMP8IJZ3oaVRsARICyJXqfJVQo27rBeLRBtBSbAAGkpwEYdRexNlHCyy4Sm20UvQFFXBzBEVJIDJKiZ/0Pi5qZy5ukJkBvQulkIeVmmxSLNok4gg3o3le7BsGLFBgqZEd4K2sWSBpOqoFGi4zWp9ZnP2Ac6NT2CkUP2TjaxN3jpAPX2dYCOoa1mnQiYRYYbucImYLRO6+snSYbprS5y98PtW6Lbrb2Icb5/CKV3gVaHFPHHpCz6/0/r/+xSA1i3cctRADUIOla6FTsCdoY3ZBzz0FdYksp4aa4mRy+2dxuIfwpFrqo5dpDYAAAAASUVORK5CYII=" x="8" y="8" width="21" height="21"/>
+<image class="gear-b" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAeCAYAAAA/xX6fAAAFB0lEQVR42q2Xy49cxRXGf+dU3dvd88APzCMztjAQRgRh7HhAxBAiJ0pAiAUbkjVZZA84iXhI0CgSEFiEVfIHkA2rSGxQ5EUcwiOSgYmNY4HBhjgh40c8gMfu7ulbdQ6L6+l5mEAPoqQrXdVVne/UOd/3VV1hLWPP7k2EbpOiIYM58x5P/+30sCFkaLBHb72CherHtOQaIoIaoHBeTzN//gV+f/jcMGHi0IBBL6fkKrx3JcnrRBUYKTah/RYwFKAODej5MjSPE0SIKpQqqAu5H5Hmt4YNswbAagO5alElo18ZvcromyFBaPhVQxdq8Hb/1iZ3XTvB9yfgtdmFwXz7ro384MrdBL8F9THEFRxUBREhAB4u54ebW+ybPbIievvWS/jedVt49aO5i0nzyPYpYvgFkUCHo8QwA31F5A602IIZaAXYsvpceDcFbUD2T+jyIkU1isUdaJoi5C5l+Sce/8f+JcAHb9hIq7yPZpwmitCpEoaDgZqgi9yyiwFtsTOxLpjlZd8TeHYkHEMbf6D9Vqfu4UjxbSRvo9dLnOtWeKrBxC50OYEnRzzjvgDSA+mRw0IddTGhvKpjBmKC2RV00x31DvdMb6LhP4d09aBEumoRYnj4DJGDVHaAxvwJGFGSX0outhPCTiSvq4MvV1q/TjREYaE4TuSFiOYNSNhIEQQHqmwgMgAVMin/i+Qv89vD/1y1hTngfR7afpCm/ZSSSdwFFx9kHoIQHEaqBilNBF4/Mcftm88SdQslLYSahYsjySz9/DLPvXvo/3L9jZNnmF7/MXAjqo0BF9VAoyPhFIRXePLwa/U+ntm/n6J4kYrjmC1Dk4SEw4yNffCVAnv+yDFK3Y/IMp+NRlXMksqXeOLAX1Z267HXD1HlfctJiPkc2Y7TfqsznI3ozKqZPiZv85s3Z77YaTRWK6ZEOjQ5P7Qbtd85Rk6GXoisQPD09ayNr3kAhfglXprSyEoZ2SgdHxsa6+Hrt6IqA3NQVZTWFwM+essOgu5cle16xCZpT48M58zy3VrLFx7LkZyupz29c8m879/d5M5Lbkb9J6hfS0AGslACKg08zfHK6ZNfCvbr675DsDtRHanL6oALLutwneRHmyt27zwTuGdiklLvA9tMMIgi+OICg8A46uPcdtkCNzc+4+9n08VkufEmGvFuCpkEAXFwAVEhqCJhlFxupFfNRqpuBaEL2YkuZHPEfKB9tYD7FKJj+MhW9kx9zDjzoEZmHE+TSN5GCJNoDGQ3yD7oo+MQIeVEGXo1pX65bReF/YwiNWqQQganRXTBDEydPj2inEWlC2a4tzDfQKNokrKjQQDBl5mHByEVZ0H38tSbe2vOjpbv0+0cIug0QYSkTqLCxVBvgjkKNKUJNMHBBCRAGRQBzBxRcO/jMSASMIOUK7L+mxjfXjrx/zrbYddERdYtUHxC0gNU4VVCfI+QS/D1iOhAY6ZLenN3coSggul74C9hepAUPqWfFTPDZS/PzhxdeWvLo0fx6o9kqbBqnudnPq0tb+pDQp7CytsRJi7yCgOQk0ixj5CP0H7nvwA8sOMIyjguDdbN/2dt99L21ia91r0Ev40Qi7pXunTgetzLWPozvzp4/pu5tbU/6mHlKQgdJAgUAkFYlGzwo8OArc1LY/MMEs4N7i6EerlZn151YugwQwNWdgpP/0PChoHGJEO2Wfrj3W/+32JxPLhrhRnzuze6a1n+OUyrFWvO5UE+AAAAAElFTkSuQmCC" x="23" y="22" width="28" height="30"/>
+</svg></span>
+<span class="label">Civil</span>
+</a>
+<a class="item" href="#electrical-contractors">
+<span class="ico i-ec"><svg viewBox="0 0 60 60" aria-hidden="true">
+<image class="panel" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB0AAAAmCAYAAAA4LpBhAAAEvUlEQVR42r2XPWxcRRDHfzO7796dYyuEOCLGGCkRigISoghBURAhIAVqKnoKOhoaPlxgCRooSEGXkp4aCZrwISVBQonyUQQhZMVJyJcly8S+e+/t7lC857uzExuhnDPSSnu3e/u/+e/Mf2aFjTb70jT4fUQbx+NRjRBLiECAZAJ+w498vQagJqTkSE6w7D55dYO5S38N75b+7IPn9pBlb9LJjuClTRUSaoICGJDqoUDSoSPW5g9ZVycYJfftEil+z8k/bgA4AD46tBOvx2jxBi1toUlwIjWYNkPq7eLAdOh7t8W6F3AO6exF27t4fWaBX26s1H+p1dpPZ/woWdsRguFMcDReNh7Uh0DyDZ1rQwdraL21phmyCjzCWObZ2T6AT6+sXQb47iShNUFQw7lAdFcIepayCAMarU/M5uaAspmaQ/UgEo5ipafKOqQ4WYPOHW/DsiKrhmHAMq2lK3w2/zuPal/vryjcQQrZA6sg4ph7YbymN5VGiIYFQ1KkyitGYT0Kgq7UcWhGTMCE+n6UtZxCLmhUNMhIQGNu4BKqVt9QHIr3GEAQ1AuSC4XYSEBDaQQMcYJTgQirS9ZkeQQpDVEIHSMvR+NpPwbNsLROSiAFo0gJViBTKFo2OsQ0NIZBadf0JqDqJtKIHG0DZTIsCQaICtiQiGojXSlYnZOj9tQ2Cqcb6KXoaO+zjyJ9cVlfLkQEGdLwbbL6+LChYGyXNWzqIGVMEBVUZJuh1wQfELPhsN4OD3lMhA6VvoeCboOXPSANdScNxmPydH1K6PYTvSW925YndXYMXZ9uFmGjl8EBnN8qkx7dihpI+xIb2ftkqD9lLaklUKVuG0dtNmjclv82Xdd2W7L/bPj+l/RMCIqQEoirW9q5+d6Ax9hUeMXRlWw0Dj7Rht4EoTKqDviozD09VlM5+/wxNHsXFUUQirhIZAFnsfY8rj9ss/KnBBwlVcsj+Q6cPkVa2YMEAw+Rs3x+8dumXWndwnENdfswoCWTaNyNRCNVm1R0kQcSLjWtputBiAnJBM2MwhI+LWFcG7xlfr29yGtTGUn2Y+apQqKKCREw9+CQrHm5ZU3grQ0H5gXLwSaElIGqkGlJnl3AwmlO393Q9X384iGME7gwgyKoA8ukr2QRiGZkTfmLZqRkaEO3iNSdnxPMEoYh6R5l+TPLS2c5dXN1/VNx2D45uBvPAaI/Dn6mua8FPD/RDbsQ3qLdyoGIcAHTM8RwBK8vowpRF7F0jiDnWfX3OHmmu7UMzh6YxuuzqJ/Cs6t+wYmQdBHyywS5hfpIpoJgmP0D9/5EdAEzI5iRYk5iEmyKHekZvnx1YnPQTw9Noa23cfF9XHUC4jhSGbEqqIpF5s4t47wQzShjIphRiTE336MKS1ShR1UZIY7h4mHG9D28vcOdNL2Fp6t1CKZYdxEqdS9s4Tp5uNyoiqLeowgkCLGO7ugWKOMlqpigMkJllEXzaGKrKjMGPq+jrqeJShMxu0bhfuSLq1cHqWFGt4oUMfVT+KvzN+n5H3D5RTQ3ktb5nKknF7+5spe7l3GLv6Gd61TWpRdv0727sBZ1TU7PI+E7JHpSNLrFzf7aNxevA6f48PAMhGlC6pClFcrxO8Mw/wIGsRTq9ZudxAAAAABJRU5ErkJggg==" x="16" y="11" width="29" height="38"/>
+<image class="bar" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAECAYAAABodtTSAAAAbUlEQVR42pWOMQrCUBQEZ99/EG1yAs+Qe3ghj+aFJJWFlUQkeWtjlQ+CUw7LsOIynVjfZ4iJPU3iF+bGtl2TscTqBs5uFAZJxM4XYBvcKCtZjhANZHeRAiRQ9+AbwUSR1OMFw0xx4F8cd3J4fgAMmSWmL84lRQAAAABJRU5ErkJggg==" x="22" y="31" width="17" height="4"/>
+<image class="bolt" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAALCAYAAACprHcmAAABPUlEQVR42nWRPUsDQRRFz7yZNYlfAUEQYY2BIFqJwUawEBHt/C92WogIdmLlr7FSQYgWColIEAUL14RIiGAhJjs7Y7EYYuFr7ynOvU8xeMebI3TaZVQcIqrCUe1lMNZ/4PV8gSG7ge4t4uNFVqcnWA9bXDa/AMwf2DJDYgu4nkMHw4jL0UhBANUHd+dnyZptcAt0ewnBkMOrCDHPuKCFjD5KH5ZMEafmwECQFRCDmCJe1tBJyOFFO9U4KJcQWcbHGpd4RBQODwJeRWiqqfPOSo6uLaEoYgTEK5zzACSS4FyD/Wo9XeM6siyF31j7gOYTXIhygsXTVU2suabSbAKkzqc3EVPDr4xnNDmdQVBoZcmpJ07ubvu1+gX3rj6w/g4jdYxy+OQd4qf/n3L+1mFr8p5vIgLTID9W4yyyv/EP7ap0R3vmJ6wAAAAASUVORK5CYII=" x="25" y="19" width="11" height="11"/>
+<path class="spark ghost g-line" d="M13 18l-3.2-1.6M13 25H9.5M47 18l3.2-1.6M47 25h3.5"/>
+</svg></span>
+<span class="label">Electrical Contractors</span>
+</a>
+<a class="item" href="#electrical-suppliers">
+<span class="ico i-es"><svg viewBox="0 0 60 60" aria-hidden="true">
+<image class="cord" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAbCAYAAACeA7ShAAAC30lEQVR42q2Vz2sdVRTHP+fcO2/SNs0LMdSalohVLBFM1VRRQQhWF936d7io4qKLSrORirr23xB0X6UYsEItVFREQkNL2mqJaRpf3o+59xwX8/LSaBEc/cKBmfvjM+eeOd8Z4UEtLU7S3ZpAsvJQjYF5IniXC9+u/3VWRlfvvDLFQXmNVD2FW8EIZ8NQcHWUHqLr4NdZ317h0x/v7KwMI9ipIycQex31IwRro95GbRi00dxGZRJhGpjF5GnQNouzHb5eW6d+3FAVYDocycNID2Rmw/sMUjmeSgqew/w0Z08e25vZy4d7aGhRFBn3e6j/juoG6hsoG6hsEPQeSJ+c9yMuBBSRCcQDp2ZXZU8FzyxO8micYrOjlP3hYG93PraEgY9DmgNeRKREVLBwmxw/F5rovflD7JO3kGoeBazoUXFRG8E+ufYb2E+jiruXuB+MNFUBoIIB7gZCs8yWnpnCfI6dfgjWR2TrnzM7vzBNSiWV17VNpTDRb5P1JCEfB6/XabhPZO3vsPOL0+TuCzA4Tq7GCRIJAlGFfs/oU1CkNlBiAJIQv0FIv+yFvb3wLNX2G+TBYQoOYKYcaAUMGGRDxBHApDZiJZkYbqD2JUvf/7ELe/fE8wQ5DTZDERQRwXEGOHlgCELc8bKCxIzGnxnoF3z4zSpADTs3/wRj5ZsM/CjJ6qKaO0GNjnfx4LW9zHE6RLlFKK5RxR/4aHlr1NMAbMtLpDSDOMQgZEt4sUzLvqITN/eUon3bWVrtPex9Rc4tPEn2xynjGG6OARI/44PLF/9txyg5HMJ9HDdHVUi+QupebdJ+kWzjBCmpktMSULlJ8UjVBKYYjoijw2+WqjR1mFJoh0BVNyCQqhn6m/uawfaP3cHlPkrtDpFjXLh6txns/UvX6adVnD7uTiGh+THr/8p34DfxnMmV/zfYx1dWUFnG5RYuuSls90iXfl3j1aNdtqvI5btX+F90Zu6xplv/BP35LoE2p8+GAAAAAElFTkSuQmCC" x="12" y="13" width="19" height="27"/>
+<image class="cord-tail" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAHCAYAAAA1WQxeAAAAnElEQVR42m2JMQrCQBAAZ/f2PBIM+ANfIGKrrZ3/EQu/5gcsxTdYiAjGIprTPYu0TjMME9gv1szHN473N38wpGyoqjG72QnvX1APp67hJZ2R8wjxNcoSjQ80w0dBMrz7s6EOFhSlAW2GdpDihHhRsrUQgQAIuAI6+KsYIR1wnVK8QTwSHIoJxZxSrgLAdtUQ+wlmiW8nkCAlaPX5A1UiM65pPSp1AAAAAElFTkSuQmCC" x="17" y="34" width="8" height="7"/>
+<image class="plug" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAARCAYAAAA2cze9AAACo0lEQVR42oWUzY+URRDGf1Xd/c4Ms1nXTcQACTGRAxhCiIKJiokX48GTfwgRDhwMlz0TEu78D168cdITG/yICYkmRI0eiBrUXZedgfXt6SoP/c7MDrsDdXg/qqufqnr6qRaW2dWzF3A+AD2BhAhAMccAxyF8RZY73P7uyTKIeBD0nQH+73s0k48Y6gpJFDNAwHAADDAPrEwEgI3X+uwckxnGrc2nh4Pb+CR9eZseQyw7ORum08VaORFwhwaunXsfSx+ju5FgoNH47K1fyfnz2FW7zt6oViV2DNFXwaAVJwoo1EcQFFCFkgQKHCHRsyFqEVfQKGQ5QxsvRT598xxePqHXAylOw4CkDWQnIuCVBpUugYIHgQC8AvwNOKhXf00AA4isygD8OCrg4ohXNJ/y1IEaMM2kAjQdUzLGJ7/jRFpzUlAmtg29zUgCrK1QJRvoPhqUKercpv7OwtMf8PSQcRZIkAbQbm1z8+txhFwPCoUQBZ/4UnlOgc0dSo3b+HEEjJZEp3klcrCw+c+BhRdaV/lMhwuvufsQYC3An3D51CrDlXWizXW+x5ib9x9FbOKLG1UQrW24+0Li/WESKtha8zrSXsIkot30Ns0W1y9+GZnoLiI/1T5UcFaBox23XT5bbEdVCKV+N7yMl1NYaDAcAcQyE9+JtPkhg+EXMzoKpxH/ECdVfbMIChC8DhCxDk3JoOEZOs0iNx7sArsz37XzQgxnwU7W9kWYqt73HY12N0fO2wg/4yQQp+DAP3j6/uDdMlz7g9HOtwReoglr1Vm6FqS7tMTxBP0W+kd+YW+8BUGx1pEeFB1x495fcqiGrpxfo5feoBfPYHkdL2G2VrqZIH1D/9FdNn7bWyZFea5QN949SmZAefJMXB/+k8fc2tx63vb/AQ3ZBINYS8J5AAAAAElFTkSuQmCC" x="26" y="30" width="23" height="17"/>
+<g transform="translate(55 28)"><path class="bolt b1 ghost g-fill" d="M1.2-4.2-1.8.6H.5L-1.2 4.2 2 -.9H-.3Z"/></g>
+<g transform="translate(58.5 38)"><path class="bolt b2 ghost g-fill" d="M1.2-4.2-1.8.6H.5L-1.2 4.2 2 -.9H-.3Z"/></g>
+<g transform="translate(55 47.5)"><path class="bolt b3 ghost g-fill" d="M1.2-4.2-1.8.6H.5L-1.2 4.2 2 -.9H-.3Z"/></g>
+</svg></span>
+<span class="label">Electrical Suppliers</span>
+</a>
+<a class="item" href="#earthwork">
+<span class="ico i-earth"><svg viewBox="0 0 60 60" aria-hidden="true">
+<image class="gear" href="data:image/png;base64,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" x="11" y="12" width="39" height="35"/>
+<image class="wrench" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAZCAYAAADXPsWXAAAClklEQVR42p2VTWudRRTHf+fMPM990sQkt741KrWiCLVu0iJBEBEkon4Dd34HFUtAuAvBLv06unIjpO1G2lIFF2bZCrEhkCaZZ+YcF8/N03tvb+LLgVnMzJnf+Z8XGJi1zy81bL39IvPs62srjDaWZ49lavfF1WvU7SahtMT4A6M79/q70VsX0fgRhJcoto0024xu7gNo77S1/iGD/BliryB6gaSvTgVInOfIXib7BUQ+oU2bXH9v+ARy/eobSPoUjhcQBLOanM9PQdr8DMWWMaBIg/E+PF5ndKk5UfIxISxggIgQqGhYnYIs6gqNnuv30Wq0vMPhsy8oo41lKi7jQagrQcf6gjZsXV7ravXmc5gMcXMUEHfEnSAXqW0YSXmRoEo0wRTcHICSX4PwDV9dMSoEXDq6dVFEBHWhyDnFQ+LQcvdwDACIKjQmLFog2kQXDcggBSJQ5aR8d2uXLH/SihFUOicg42QcE4cw1UgAHEhll+R73c3K4CaxKkjsJNvJA51ZJ8cG0GL6CzHuBgCuvP4QDp9HdEiQqlejBuJdVHxyRlvMfifnn/j23oMOcnsnsTHcIYcByiKqDYIiCHhX0+6x4WEfl99o5Udu3P/j6bEH+HL9XQZsEssaIY9TMx+n8xcmP5PY5sbdR0wkPW1L/ivKTt8IBVQ7XYGH1PH+JGA+hCfKoXhfHwAXJx/7rGucT0hAdghyVpyzlagxpaC3Mtc9/gPfsROYymmi5kO0ErwVDJ8QO57c8i/T6Yo4M2D/tSYoSBmnYv8XEoBKcJysTsExPa2u8yCrIANBKumzccDMT23m00dLieQPOK4zB7VxlI2jZBy1mVT2qNcOzv4y+u/hgyUes8r+I2fhcKLY6YDvd/Zm3f8G7a/7UWH/9Q8AAAAASUVORK5CYII=" x="22" y="23" width="17" height="25"/>
+</svg></span>
+<span class="label">Utility &amp; Earthwork</span>
+</a>
+<a class="item" href="#roofing">
+<span class="ico i-roof"><svg viewBox="0 0 60 60" aria-hidden="true">
+<circle class="puff ghost g-line" cx="42" cy="12" r="1.8" stroke-width="1.5"/>
+<circle class="puff p2 ghost g-line" cx="42" cy="12" r="1.8" stroke-width="1.5"/>
+<image class="window" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAABcElEQVR42nWSvVJUQRCFv+7pu7DUIlVUGRCQIKGRRaCZb2DgixiYQ2rke5DxEBQRmS8AKYFFlbWX3Z3uNrhz76pgJ9N/Z073mREALj4c8sjWDnhu23rP95te+Hr2FqufCR3SqqAqKEDL1ZoAhILqNfXVjWF1zlyOpqJEoghFZOKwTFDIAp4LoqixMEFCWD05HgN4VgQtSlHBIwfigKhgFdY9RgUkEylQiiCyBHmgqlABdB/lEKLR7wBrjHEV65S1V1zume9c0be+zDPMPzIL+1OrIYgALUIm9OtffPtxP3V8eX+CrvJfkQ3vkyIJCSWgvPAUo7p/AaMmokkEmCld7nP+7nTqWG1eo1WeAydPh+J8doz6J1AQFXbjANL+AxQgklSBumATb6YJS1HSE7LtWRtw04GTmApFBh/drpWZRG7FCQcEw7slLneQw7tNgDa6B1Ag289K+8nezA3xO2zvEp7ajaMOI8kYd+30Ry5ul78BVd2SY2H8UHUAAAAASUVORK5CYII=" x="24" y="34" width="14" height="14"/>
+<image class="roof" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC0AAAAVCAYAAADSM2daAAAEc0lEQVR42s2W70+WVRjHP9c5537gAZQnMVLTIor8gaGICIQM2lht5bte9Q/U1nrVhiurjX6allkv/BPa6pXLtXpl4gQCReYycv4uRQRFQB5++Dz3fc7pxSOhWxMCTL/b/ebs3Of63N/ruu7rwP3Sm+vy7tfRsuAnNjdkk7xZjPMleLlGItlD87nRhxf684p8hiefw5s6UCvxdoiY7iJId9L8R/9de1+vyCdPLSYW6sxC9m2i3CQ7D964Vxi9YMDby1fgw1oC1QjRUgxCTOUgsgpv8ql9YpzWK9Mwdcs2ETeNQDnCekQyj3XQdvnCvUKZhQHetBbjaoEyxBqMAG4ql1k4tQmxj/BBeTs61kNz5yiBzce4VXiXm9noM4lXXJwp3PygvyjLZSi2EXerBii+A9QCacDgXQBOQVSMVYuw40vYsb4Lbww4MCI473EeiADL/YNufr6QkYkaTHoLziYAj2hF5CfBnUepc0AhTkpx0SIcoFwhWjWAKsBHuThRaJXJiniP07Nqs7lBN20sIT1eh/JlSBRDC6hAsIySst14d5QvT13k3fJHkWgQbyqJyTIUAuThpRLvQpAYNnT/oKhZGT2HRvxkw1bEN6LcOpTNRHLGQXCdkBbG0+18c7oPgNb+CWpKBoj5UbTk4XU+GWsVeAPuDlunlt1fHLnaszBOf1WzhIGbdYRuM9oX4Bx4IzgfYbmAkkOkrp9mX+/kXe/tbksCnby/cQhlthK5UiAHo6ab9T/aODvopoqnGb5VjwlKsT6O0uBFgDRhdBQlbXx27M97Z+jEWZork6TtNbKkGiUFSKAI7R3kLpOAeZfH21XVZKuXUH41iixEZRzGjGLdTyRTrez9/eqsPr6lb4wXnxwg8sMYv4RALQal8DI967yMc6Tv2Nwm4q7aRYxONhBSQYylKKfgtsNW9aLDHxnLPsPeXyfn1MwfV5WAa8S5tUQuwHufgdaTeHoI8g7wYcvg7J3eXrYS57YhVKKiBMZp8BmHrXQSqf3s7DpLR28051/moStD1BddwrkQ/ApwAYIgBHhbiBsvYkNimKM3BmeG/mhzOda+jHdr8FGcHG3QRhFJCqt+YCL6hT3Hry3IJG25PE7l0l4Ccx1vH8eQg0ahrEL7BHFVTP1yzeGBi/9eHs3bcnC9tSi/FSgg8goLBFoR6X6s3U96HuUwk95ZU0Ru7qtYnoFwqjE9njFC9xux9IGp22LG6R1VjyFjr2B8Hbj8zNgVQASvT2L5nl3dZ+ZVDjOpdXCE+tWnSIcB6CKUCFjQNguVXsYtKWZzYT8dgyPCW1ueIs42JHwWHWqynAAeF0Sk5CApDvP1iRH+T71XVY2JXkPCGISg0uC0Y0L3M+F+NsT9JEbSCAHWOdLKgxlB1AF2dXfwIPRpZwfbV18ivvgNHIU48eCFwAgxNapp7xujuiCF1ssxsQQq6zxWvmXn8ZM8SLXdSFKa6CIWTxDkrCQdJMG0sLu7a7oRmyrrUSpBFLWx5/ggD5OaXqhnIrWcfe3fAfwNeNPUyrNtovwAAAAASUVORK5CYII=" x="8" y="12" width="45" height="21"/>
+</svg></span>
+<span class="label">Roofing</span>
+</a>
+<a class="item" href="#flooring">
+<span class="ico i-floor"><svg viewBox="0 0 60 60" aria-hidden="true">
+<image class="stairs" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACcAAAAoCAYAAAB99ePgAAADHElEQVR42s2Yv47cVBSHv3OuPbMzmyybREIUFASlSoEoQCgdEk/AA/AIFCAeYGsKngaJlgZRpUJLiSIkkFZpJjsRM2P7nh+FbcarhCSIzc2cxpKPZX36nb/3GodiXz1Y0PotlkCzFau8qQ4Grou7zOxzZuZQNyz918OBW2hJtXuXyhx5w1G6OBy4GzJcTrcLrBYmHQ4cgAFkECI5fjBgLRBZAHj0j4OBi43IWRAaX5UJ69mnp7TNWxgV1VpXq3RmdI2w7m0axHzvKgP315N71HyEuiU5AzE4HHxn3AS2dgwCS1YWDt1C/j7uJ5iezaYmRJuDeW09d5SEq3qeClDWXrkhwhnh3kML8GSk5IXg0l4srw11K9q8wgnCIQZnMwDWKYM9LtznHEJC1TmZn6itYTf1D9XgLraUnq0BJiP7mqM7f3L24/YlyVDC8thpBYKqftVMLVEPHZi0h2yAR4XgvnuweKH/clPj8ml0yyh3dv9Dnlx+QTYR3ldlMtsP8wBTjaiw/9yA/m86pYTbEu/0T7sYB9QwwNHYw3JAMkxCxXLOnr9DjP3LR1+yssoBSBMdrIPUXXn3zJ7RtJw92r6Bao2f2Tbf887t7l8/+frhppxyMUbVAe/49nx9TfPkOv4S8HqG3XVJ91p2mRfYNx8cM7dT2qPnV5mtHdedK23B3MrApaN7xO4zUq76T2OvlAdYbRDLfqNNBtXQ00rAHXNCG3dxKkzGtMUrq99qbZibGuBVCI4OPE+2ijFNA2w4C7hDYOVzjm5QI4A2yGlNqi7IgjQN8TglAsTjQnDTFt8Eqn+H+IF2Dm2Co92kULt+k9XssiCcg0LIwXnK2S+/FVzqX+kCYxRHUPTE8RKbufWxM8ip6Imj4stPTlhwgnUOC2Ayk7vmNi7jDVlFzX2s+5g5S9Jm0DIgAmQ3aUY478+fReGWfkqV3sPaY5RFBhR9qiUzaoPWNbn8KQg3bIt0iEx/BWUZDCMQbv3TZobPrSzc03bNjAsiLRHC0xC+dliFBsVMYtetysKtbjzkdHWOLRzqq9vP/I9JLGtITVMS7m92pTeqwYRYQgAAAABJRU5ErkJggg==" x="11" y="10" width="39" height="40"/>
+<circle class="ball ghost g-fill" cx="16" cy="41.6" r="2.4"/>
+</svg></span>
+<span class="label">Flooring</span>
+</a>
+<a class="item" href="#painting">
+<span class="ico i-paint"><svg viewBox="0 0 60 60" aria-hidden="true">
+<path class="drop ghost g-fill" d="M26 23c-1.2 1.7-1.7 2.4-1.7 3.1a1.7 1.7 0 0 0 3.4 0c0-.7-.5-1.4-1.7-3.1z"/>
+<image class="roller" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACUAAAAsCAYAAADikXHLAAAFm0lEQVR42sWYW4tk1RXHf2vtfaqrZ/o6mlGDDkMYQUYZpHUkonhByEMe8g0CPvmuiOYhYIN4RchbHvKUL5B3FQRvRAiMwYDKKKL4MDNJ7OkZp6q76pyz18rDPlVd1d1DV/dUdzYc6lz2Xvtf6/Jfa21hkvHcQ8f4ZavNvzvOHXPCYY2NqxVvX7yx9wbPPzpL7P6WmfgAnb4xVwTMHBQMcPc80UBEUMAUiPn12Hffud/o9yCXMP9b3BPUTP8shT5OTLMsBkfqRhjg5tjo5AQKSBQsgeM75AUX8F3WGqB34u1LE4CqFxEUNycAlhwT8qY2vq1kXOAOCTwIrnmeqKC1U7tnAMbYWgMigpeL46BePHeSULeRlg7f9atlCmEISOjg8hMSQGxE4mDoyG+zP9poURoVK0PzB1nAfRmph0szqNWnluj37ifU95F0GfGAKajlReoRvFG3f0vp70EL2BwgB9ps2ZWBykZ+AXoj98380DqP1E8SdKigyHMPHaPcPE9hT+MsE3BwUM8bSGMNBwhQeoe3vvxxahH3x5UzBB1zA2W+dQp8BbFlvPRxI9tOIaE1XRooQo7IIuqI+eqTiC3hKZsnsI7rNaInUgCvFxG/DaRZYou8cvZMVn/v1kGldDvJQdy3zBfKgISQnwKg3wCf475JBRRpBZfHEM2ggp3Gwu+yr4QcAGN+M9gsTAZKqiU0RKweAQVAPRoxVwkL37P6YQeAV86dwm3ErL6AsNA4W0Mvu23mk2vL2TJEY76GYMiMvF2WhTXcjaB5kiff4roDmEtt3G0HN0PqiOvjPOWpCbP/bL1b63/HYvw7IqcxiZkwzZEkmGeB28GZjqSPUe2poAKuMsZrpkAB0a+g5T93YfRt/vHnrzr84fEPKDfnkaTZiUJDEdVO7hzKaO9uJgs3sV8BddHljc//25gvbP1b2yVHv/npOrDOEQ0dZ+GbRNIRjzjudAoej1PzC1574Pi+pXUBL4w17fKXCxsHByWacE3ZVxRI51E/R1+bkPDJoswG7Cxwkh4vP/wvVD/ljX+s7R9Uq7WGy88giw0tzILPZiTW0IVN6AkiDek4hdyG2SzPP/o+f/rs6v586tUvvsTjVxB6eCG5BgqCi+xIg3tdVTL6yXAE8RksPYhdv3e/msrx+cmlizxzqsON3gI9a9Mzp18bPTe6KbHpNrxKcXrY8Opa/t5NidqdEIWoQhGUts4S9BIfX7m4H1DTbwJeWPk1Lfk9M6KQQPw9uPYuqz/09kkJUxx9cVKT+MxytXownpom80VBRJCmTtIg/39QtuljhHwATcXp83ENro4Hx90P4rXTAbV6do4uc1QuFHGZAkElE6nJPL2lO1l9rGSz1+WtC9cPP/pWH1yiH58A7qMqAzM6RwwncvuVoPKfsXgDaSew76H+iNcvXD5cTZXxboL9BlxzprLcGXvDqEHnCcwjpZC4h1quAJcP19FDPJ6rtNRUldu7oCZ/espdc5B5Vp+aO2Sfqprq0wYHFjcQ+2nYBYst4b4IrpOWRlOKPhups+VHPL0/curyCJoeQUxBIdRHTAnuTp/rvPP1t8N3L9//KwpLCMXRkafVPibFt5FlDUfP6MWoJB0WHjc381GlGVUBFVx26Yxj00LZxLvpVBLw1sNOMrbkJM+HZWmyPDgdRw9NSglA3HauWeK0BKLIpDqIU2MEd0dqZ0bmeOnc3TDbOP7GEtEVDYK5k/a2z62D6tdOHNQpAsIZCn8WKaVp1edQb+WuSITKnM5VP1xQM1FIBi6DA85jiB7LLuYgyNbRljmFCjMn5HBBdesOMRgalOSONF2QDk6JpVGhgSSofIPWD/Xe3cytjJX5Ptp2ajnBRkrUVlFLRakVtVfUVFSUVLqJ2xdI8Rmvfn3taLqZ1dNtrt91c3nrl52/TtbR/A+LbJFpubyd5wAAAABJRU5ErkJggg==" x="12" y="8" width="37" height="44"/>
+</svg></span>
+<span class="label">Painting</span>
+</a>
+<a class="item" href="#masonry">
+<span class="ico i-mason"><svg viewBox="0 0 60 60" aria-hidden="true">
+<image class="k3" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAASCAYAAAC9+TVUAAABl0lEQVR42pWTsY7UQBBEX/WMd28PWOkOCREjJCAmR/AHfAJfQEZEeD/CzxAQIkEM0SEChDg4zrvn6SYYG5vzCthx4HGrp1xdVSMAnj0+4Ggj9l1fPwWvPrbi+cMnEI9YlhtkFw6oBPj8kGz8UVecEoWz7m0m0dDEioUOSapNYQH2d5DGAuSwWGV8EyAgQAbuAXk3/SCgG78NSNNu6+mHnUN8r4UrbNSJ4ABxNC1XEA2PRLL3dLxmu7iYj3NhNHYf8XQOYtSJDEA/uFZOefHmfOdIL+/dgjSgAtqhXvcvX5tRD2bbyfq8X1xs74BZ1m6QIHCLui+xL+6fgXCrefkv/qbBjfw7iRYiIsCOWZU7nDxo64kNsIbNEiiGtrcrABBJlLjCJACLu8BNPBWsgC+rZTmL4pB0neKBDVfAJiDR206sQWtCUKbaX0IyiAAzkIQTkMjYUniAB/UCTg1zoOtFShpT2ZeUhQeZNs4wPwW+kZJm7ttU9KHgoCSKFS7Ll4zad3T2gdQkutI3Hvbvn4wRL/Noby3wVfsLolOM/pJHNiUAAAAASUVORK5CYII=" x="12" y="31" width="17" height="18"/>
+<image class="k4" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAASCAYAAAC9+TVUAAABjUlEQVR42p2TMW4VMRCGvxl7d0FJ9ARFJDoEoqCgS8cBUuQSlJyDdDScCiFaKDhBlCpN8vReyK5nUni9601CeLDNyB7P5/n/HQsAH14+4dkL4X++L9+2wsej97TDCe11g/I4yDVHUcDAm0QvPyL764ZG93gaW8x8KjAAnQGqQrnD+nzOQwLt4oM32lhsseLEkdD7Au7m9yHOGrc1BMMlS3AVdITosIdxUA6jQoZoaT8Kbj8Zhu+kuIF2ht9YjgccIXqMF+mJqhPNEJMr0uqcz1+vHpT66d1rxMGXlSyX4S//tK/NA6yG7DomTdE+Rf3n4dreL6sHQXZjRrDakalKd5cTt5UcLdg47qVseQjP2d+84vTtZiq87KAD+A2xP8Rbyd1MkOJRckigwxuMQyQkSJACdFYpbVawlBNZThuYr4BVXoSqa8uSU9ko1DDKQapN+4NHCgzz3R7ygzQjkmSNyBkm2RzV+QEuAGMOy3kJgkuiTxeRkH7RN2e0JnO7fgfSAZvsDyHnvYGba0d8ewsXKos/lK5ATwAAAABJRU5ErkJggg==" x="32" y="31" width="17" height="18"/>
+<image class="k1" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAASCAYAAAC9+TVUAAAB4ElEQVR42pWTMW4UQRBF36/u8S7eBckkRk6ISEAgMlJiTkHsAyAOwSG4DhkhAUJkSBAYA/bu7E5VEfR4x0Zgi5JG3T2q/vXr9y9x/HDJYrFEewYA5/w79q8eN+vku68qe8vHZDzD+n0IQECARVux9gVgK3ATigQgGOjiQ6Xz23Q6woYlRcI9dyAyoYAEVIWAfggsoEhEbAn7VmEAkZg3EhZAgkkUhAmGBPPGyPtAIdKgmqhVdWowABLTD4qdYorGKFuRPpNwSO0jO5xahboDcE+sMzw/4npHljUMMAM2s5Y2hFF4AP7isr4TCDluywk9n3jz/uyvD/T66R2qj8RbGHgDkdR+Fa6NjqYXV0BKW0aXNIx716BsIbLlFxNMV9s2R2I3RQw5GuqSJurELI3BQEU3AlgmFrrwYW04CUVGZhLA4TUgXkUXrdCoY2MSBit3AijDktOvR7x6srp6+xasfxozP2gsDNzAOl3yyTYxIHlEx31MgQ/t3Z1ERdydGaWfU6rI8ofZLCa7ZyxIW1KBkmqCkwhBQFriI/CWpFdWNkoyg7mNQ9dN/RbTOFBtVlpNIR8dfsHkbNgy45w+bDf2xZryRSJH0BjdoMzdmDjOL1Yt4eXzOQe9+N84+ZK8/bz+DQO1zWGVlKvsAAAAAElFTkSuQmCC" x="12" y="11" width="17" height="18"/>
+<image class="k2" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAASCAYAAAC9+TVUAAABo0lEQVR42p2TMXITQRBFX/f0SEJYBorIkEBIYBdXoLgIh3BxAEISjkUGIVUEHIAEl1HJK2unm2Bm1/JClWwm25npN7//7xXOzx7S52PYcP+1hItyZXSLV+T+DWlu4PdjOM6RfDPMjzB/zswzFBARAHRSUAiSynjugEuPyk9jGYKGklAkAqJBooIcQECt7gtCRJBSBZqKQU87BFTAL0hcIl7Am6IZEOAJwo+Bp+CB1Cq76c/b0+k7ql/YdhvYjc1Dpil8Tda3lIi6LwPEqwmRhUi/WOcffPz6+59mfjh9Rin1Qamg2/aJx+FIdqB+o1CnEAIod4hW9+7/HeTdIGPZ/jREVKQLlHSgmwdAkhHmitIPgwOEykERvUFoDCog7UWsDr4LVFawPuH92aNbxXku7LZB7h6jJgRByGROBhB+ivISk8mPtIGFCuJLytZRlaHcMMCSoEmJEkhaga5af2OMEE1tbaGqiGHY+hqZRBAeNbWyN6kB7qCDCQ2gVhkKxmV3jc3X5DyDaTKpQqQ5H9oSabzQwrV29evdiwVPToT/WZ8+X/0BZjakk9fOgWwAAAAASUVORK5CYII=" x="32" y="11" width="17" height="18"/>
+</svg></span>
+<span class="label">Masonry</span>
+</a>
+<a class="item" href="#demolition">
+<span class="ico i-demo"><svg viewBox="0 0 60 60" aria-hidden="true">
+<circle class="puff ghost g-line" cx="16.5" cy="22" r="1.5" stroke-width="1.4"/>
+<circle class="puff p2 ghost g-line" cx="16.5" cy="22" r="1.5" stroke-width="1.4"/>
+<image class="crane" href="data:image/png;base64,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" x="11" y="11" width="35" height="40"/>
+<image class="ball" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAeCAYAAAD6t+QOAAAB10lEQVR42tWTzWpUQRCFv6rumTshoxIGEg1o3IiIWQgSXSjE7OM7+AauFNxlIyL4EL6CDyAEdZmFgmKUgCBEQmIwPyaZ3Ntd5eKSqJmEGZceqEVXnT71011wFA9vnWLu2kWOgfZ4pLwAzVke3egcDcUeclNOo3aZIhf9lQE0A7sDlEEF2LEavWVYdjz5YA0CkBicbP4P5BPwP5J754wYwj5Rvb/yzuZnaDxnaHujP7lQx6xiKw6gHLmE6T0anZH+NTfaX8mNF/zobB0Nhb9OD6bOUlVtdr0k/GwxPRJ4833vsPXDVSp8Eiuvk6rzpDyEyibNaomUFni69KFWnrvTIjCDchd8nIIWBYGmDCOMk8ME0xN7vP62HLg5epUgs4TcJldOECGoIA6KEhvD4CPMnPsSCTqF5GE811/TzDEcz46ooK6IdSjDlYimMYSAV446uDkGuDtiIAqemhijinid0rOjdsL0HdxFyazg9sceWW3iUl82gBJhVUEXqGyn9hmoCqpCdEFdsJRJtkbQj0pzbZFKXkHokiK41gZONmOvXMXiPI/fLQfmNxK3z6ygxRpVjHS9RalKYh3kPaW95Nmnt79f8AD3J8cw2mgrImmfoe42TxbXD8K/AET8v+ytrMnhAAAAAElFTkSuQmCC" x="39" y="17" width="11" height="30"/>
+</svg></span>
+<span class="label">Demolition</span>
+</a>
+<a class="item" href="#drywall">
+<span class="ico i-dry"><svg viewBox="0 0 60 60" aria-hidden="true">
+<image class="hammer" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACEAAAAmCAYAAABK4fLXAAAE4klEQVR42r2YS4sdVRDHf1XndM+dmZgMRkVlDBmNTvAxGhQlggtxo0bBrR/CRSD4gAizUBcuFHHlVly4ceFC/ADiIwtBNBISRVCjJln4mMnkzr19TpWLvu+ZSe6NuRZ005zTVf0/Vf9TdaqFy8nRw7PsYRZSyaWkjC1zMJcusnpibcvUKw/vpZlLyoYAsC5N2dbGi8vXUS7cTHtjP43GPiwvkH2mN2/dm4F2HpX6JlGQUhD9gtj6itWvL/XtriwSiydJeiPuAgot+T5uBXBgkVIfIm4+goQFQhYCEN0BcMCzd5DUAwZEgAwguEPW3VxqhJ7d1bv3kfKz4MvMxKK3GNHzwyCOH7gD4tOI3IV7RMwxh0F/CSBar0JEyJWhQAhKdsdSB5UAjQ6Ag/sROYL6MniEqn5HSiDSB3FsZQnsGcQPIBJwq1/MbAB/odoedpmCIsQSQhDQPeRqAdIANc4Lx5eXoHwKZBnyiOdrb9aDLz24h1A9gdvtQEAE3DPOGVrpNIWfA232lTv0KIBQCrntNPUQoo8RNICBJyHrEkXxKCbLJI0goGkLA2oQye6nEe+kyhHxTqjDOSyfZE5/HVZpQF5z1hsXee3k+d7wC/fdypxnAjUPRBZBl3Dbh2ux5cvacwSRYyvzqN6L+zyI9AggHgh6COPQkEaoQGaMgh+AT/pW1yEX3vOS6h24BMxDT3eHTR6Zn78FSzcgKRDxPgH95mE2dqdUgISxdoVkUSJCb1FqO76otPONSIfGolKD1oErgotcOUHFOkdchUTaqY3zO6Wug4InJ2s/cKZAghjmkWrvjj4dFfeMIJgoUQUzvwyI4gcadoF2FYilIGGYhN52NjeV2XCQGX22jq8znDy2lVMQ5lG/jSKUWBCqyrYH8e6JNbhifOHVB/Zi5kSVOjFuJwPAXM4ROEOIj1NZnfxsgJw2vFGukcQRa2I0i18p9GMk/oiF1AuvDXw9TApCVBARgghhZC7sEihHeHHRePnrX2jEj/BdP8GMYQEs1mCKoJQqk4FQEVQFCVrXj0FHpMFyOiwvnTiL8SHe/glvZWg5VjlVy9ho5TgRCHNnI2WKAhox8tbhWegk1D9TiV+GrW989gerKx+woc8DiyBCBaynzTh57EVQVUxW+Lv5Orqn5mNBJFu8LNVWv70AvMPRw7O9sfe+bE4GQrr2HaSteNUgObh5XUnpJzgCsBs4vdXO2182R8vI+OIdlaSOdD7qA0mo9ygdEGPvq3H5kBwx760yW8Jp4dkJURAiKsVVbu5JxUBSxvQ7rl97vzf8z67HcI4gWkwPRNXxsBpULaclFa+d7cf25YNtgkKYPP9dhYaB+lDa3V7yNMPRPe2PVEUN9YHIugzOU/QEKuOtZxq7YxK6eRAsTNMT197c1Wup7lwnZOdT1H8DUQ2eAUS2asb/0X/WKelxxBMpMsyDae2Obm4IuvVQYyNNcphGxtQohFSfqjCnEXZz/JE7abVgpgVy6SYQRTq5Ik+rdnQDYAZSLELrOWYSiDvBFhANWDHYKU0hT0gQcva6889zqC31fwNIv0mqu/SxvTE+iBDWO5261k0S3u/Suj88pPvvwlDZ4M3P168tiNnGbzSrT6n8HtzDtqTN5kQF5WdSODVplMeTYyvzlMVukm2v1950mIOF3GT1m7/HNfsvKZDLB4x1LFIAAAAASUVORK5CYII=" x="14" y="11" width="33" height="38"/>
+<path class="impact ghost g-line" d="M10.5 12.5l-3-2M10 17H6M10.5 21.5l-3 2"/>
+</svg></span>
+<span class="label">Drywall</span>
+</a>
+<a class="item" href="#lumber">
+<span class="ico i-lumber"><svg viewBox="0 0 60 60" aria-hidden="true">
+<g class="dust ghost g-fill"><circle cx="12" cy="30" r=".9"/><circle cx="15" cy="34" r=".9"/><circle cx="10" cy="35" r=".8"/></g>
+<image class="saw" href="data:image/png;base64,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" x="12" y="9" width="36" height="43"/>
+</svg></span>
+<span class="label">Lumber</span>
+</a>
+<a class="item" href="#insulation">
+<span class="ico i-insul"><svg viewBox="0 0 60 60" aria-hidden="true">
+<image class="slab-bottom" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADEAAAAOCAYAAACGsPRkAAADL0lEQVR42r2WXWtdVRCGn5m199lpSloMQWPV2BRME6MJ9rRapaC9EwT/gbdeK2gvxMK5qFTxxn/gvxC9UkFUNMU2NW2iiR+0sZSgEWJzvtaa8SLJSU7zdbRHBzYb1p49633nnZm1oBN77eQxKqcG+T/trbEHOTfxcCeusufX1yefpi88T0kG0RhZvjNHwedcmF/4z8BXRkap21k0G0JEqPoifaVPqUx/3xmJygs9rFYHyNIY3jyDx35ylNwUDJpuWG5osYD5F9jKr1ycX+pK1kNxDJEzyOoQgmAFYOA44o76TVLxFWbzvHNlcTuJSrmXejGJx0lKHMUbfYgJ2B47BwNZIsWf6NFvOD8994/Bny8/iVdPggyj9IPoNh/N1mE6kAy3ZURvUNNveffKd2skXi0P8FDvK9TjoxBzShKwhkHcH4SqEHBicqLewksfUbo1S+W31V3/eWPiIEUcx7OXCXYfsk9Jt5EwIDkONLIa8dA8S+HDzQDnTo+h9cfJ4zjqDxCCkhwSjto+nZULCcdjQhu30fwHanKd965ebZUp1RGoP0H0UTIfaKlsBugugQ1cnDwoEp0UEugi2Cx3wgzvX/5x58aulHtJ8TjElwhyZLOidP3pQCFXR7RJTZeJaQFjmMM6QLAS5kB0TDfVJIA1fQcZIDYdxTEWcPmE4sAvVC6tdj6d3p44joRncBlGdADxAE1Q27tdtiQScycTWQO7sW7tgDVf6z9Lm+seEuhtVhsLHAhfc2H65383YlvqPHc/+FHqtdMUPgoRooG7k+e6DVQrugoxGWELiZavbhI9mAVicppNAyIpm8WLL/GVG1yc/f3ezokdCZWHWKmdRWWEQ9lhkgdwdiWydQi0+WRrr4SjYrivEJkh+Gd3j9Duk9iwN08NorUR+ooJqs3HCJKv1097PW30rGl7rWMgWZ2k1/Awg63MdZL17pJoU+epIzTCiwQpE+qCRVAHDZvZN4csCCkZDa9RhEvgH1O59se9bt8dEq1ryrP9aLVMj42j8gjEnpYyNf2LIrtJtOvUwhQfXP6zW9t2l8TWA83DAD12gqxxApcp0uEp8sby3eOxG/Y3mpNo1BQxlTIAAAAASUVORK5CYII=" x="6" y="42" width="49" height="14"/>
+<image class="slab-mid" href="data:image/png;base64,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" x="6" y="27" width="49" height="20"/>
+<image class="slab-top" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAATCAYAAADWOo4fAAAEAElEQVR42tWWz29UVRTHP+fc+2YGppSSyk8FSvgllFpRoaUqVtQFwYUx7kxM3Jho4oKYGBsgGTW6MBIX7vwL3LolElFAA6QGmorlR1yACpHaAKXtdObde1wMHTqtQIuDxpO8xbvv3HPO95zv994n1Ns+7FjLUGk7qkfZ3ztQXX97zUJyjbsoJl/z+bFf65XO1yXK7vYHyfhV5DKdFIsr0TjOfD1e49M8L0H8VvLaQU/nOYpjR5ifuUDhxOX/DsC+La3gn0XKS4hpE67oMIy8/X1cKxoxQqJrULcKS4cotJ9j1E7wSd+ZfxfAu+vnEdyLJKEFSw1NIcWIHnwKZZuyYRTwhpoQgQRHZCFp+QGy0gr03EsZOmPPt7obat4HAcpgZYP0ZrRYeWaTXTBMZNq3N9sW/PMJFLpzlIa3IekObOQQcLDWoQRM6nRUiHdoi5khk6oXgawqqdYCeGPZXBLtZm/HJnJ8w95jR2YOoLCxAXwLRdvA6FA7TpoI4xHv5tb4LZYMkjagUil6omoFUCE4Ny22iNQANsCcgNVC/uL3Ud5Z1IzGpSCvsm/zC3j3I9fKP2NzL/LZD2MTrm5StxtoS7aT9a+g0kVG15F1edKyIQEk20jXspMcvTQOwI7lXWjcTLWnE00UcKIgF/n28i/V+FsWP0oibQiCCUiFP5iBiadrwTBHrlyg0J3jqeaVJLqTEBLUFCFPjKvJ8Aha3MgzTcpzLYMculQWdm+bQ374aXxmJz7kCGXDvBCjIU4ws5stBrExzPVh0gzp6kpHJ3NaK/s8QnBXifolMQ6i5YdQfY1JBKqx6CG1gOMnhHHQVszm4KJUcxPBxBARsjnlKn+CHJCbtFlBKbsWdY9haQsJUt1HrDwT4ox+0vpUUU7hsqgR4ihYDjUl3kHNlTSC6i2OaXorj5lVNJaJRH8ecafI2fnpHXl99XKWNr6EYw1qHolSmXVqVaHeto4pALJeGSkFyiGSdXr3I2mKi6UGAVTBJFDSAZx8xUenfoNa4k63PZtXItIGbECKKxBzOCDIrE7fGZmoIAJRDBXBiRDMKMYx1F0ETpOXPvb0Xpq29a7BC90NcGMRw+PP43UTifjKaOtomkjNIEwCo+lxAodhyR98emDktthnd/s+uYzMtU6I6/EsBjJ3pNTdLGql4IDhtYToFVLrx418z/tnB2c0vHtO/kFrOyG2Q/I4RgKzuIG9CqkaIRrBhjE5iaOfj/v6Z82+ulCg5+GXSfwTQMOM/q/SWMIlY5gcxpe+o3D6xj3Lp65c7tnYQaKbIK7HJI+IVPUeMIhX8XKW66Gf/QO9ddE/98MK3U0UB7eS6C48CePhOshBGrPHea/3Gv8r69m67n6G/wsQwnKtv3ZhVAAAAABJRU5ErkJggg==" x="6" y="14" width="48" height="19"/>
+<image class="arrow-a" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAMCAYAAABSgIzaAAABIUlEQVR42p2OPUtCURzGf+fec+69loWShb1ASyERUaBB0aJO9Rnaimh1bAwairAv0NDeJ2gth8ASJCm3Nl2aojKE+3IagkD0BPVM/7ff/3kEg3SwlKQrNrHtNmf1yqAT0dOVFiZJqhydII+0XbSO8HUb3CsInik3Or1gaSWBo4p8fiySio0SBFUiCmhdAzEG7jRKtdBUOLq9B7DZzW3gqD2UnKUTtrDUBSf1O3JTW0hxw/HDJWupV/wwi4iyFGcyFBJPkvHYPIRNLGqcNx5/Yr+9+3jx77rcqLKTaeIEq0zEl3G9NEZtp0/Zn1vvmx/mPQDLCEa+Jgx0P3jdBZBGMDHkEPOMj82OnrRwbfF3UEjBLzJHVSMWw+I/jtSw7BfT+gt+2EzwxUXiMgAAAABJRU5ErkJggg==" x="12" y="9" width="14" height="12"/>
+<image class="arrow-b" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAARCAYAAADtyJ2fAAABK0lEQVR42qWRvUoDURBGz7134wYxIliogaCFhVsECWgVYgR7wdLGVxBrEQ0pbNRXECzs7EVEFgMiIkiQgGAsIlb+NCJqzN4dOzGQjSR+5Zw5MzCjaJWNTJJGI4dmCglLfA6cs3X2+LtFNQvZJAQzSD2N2ASiDAAf+glHl3H7SxT8ZwDzIy1n5tHhIlqNIeYOY3dR5JD6PqL6iOlpDHPkUm+cPtQMSxODLHgrxJXHu1zxag/YvjwinXCJk0d6fDavD8kP3aNNnFCyZFOTDns3LxSHL1CxW3ZOakSlWK4AFdZnx7FmxAFgzT9u2SxWINZcK/hVoKppmxCotyTtRaVVFGov6q4Q0Ailc9HtVeB0uRH+I7rdiNHY+fONttORgf7CdSwSBp1fYNUbjULfoNxYazjX7s8AAAAASUVORK5CYII=" x="23" y="5" width="14" height="17"/>
+<image class="arrow-c" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAMCAYAAABSgIzaAAABJUlEQVR42p2QPy9DYRSHn/e97+0fokKIoYsYjJUIKYlR4gP4BD6AQYw1NDEg6dC58QF8AoMJg4VKNVIxmFiIlOLeyu295zUYhLoi/W3nPHnOSX6KuGzMLBLqIWx0wE619ROrb9NqPkM6mESrJVJOFkQh9pW2e4h1ziidPHSLhfwCijyOGicMrrHhCEoJljvE5HBSTbAXeP4R5dqzojCVJZQVEu4YEY+I7LNdO2Vzdp23Tkgku4g3jBlYJmEmCOSFPr1nkM4gmWQLv31M0KxSuvcA6LwLxlU8OZbKzS1QpjidQ9w5gnDUsNVoAI2uchwBtAL7tSue14E6gI5tVcvfmB7zu7g2n/5EPX3UYK2NoybWEw2+F1G59P8vuk2DTl7Rn0jH3f0ACu9nyJ44B0UAAAAASUVORK5CYII=" x="35" y="9" width="14" height="12"/>
+</svg></span>
+<span class="label">Insulation</span>
+</a>
+<a class="item" href="#landscaping">
+<span class="ico i-land"><svg viewBox="0 0 60 60" aria-hidden="true">
+<image class="ground" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADEAAAANCAYAAAAAJIbKAAABbUlEQVR42u2WTS9DURCGnznnUp+pJtqNdGXpI0JEbGws+TuWRMRS+CN2lvwAO1FiIRVpIlWSSotLq+4ZCx9VekVFBOm7fM/MnPedSc4Z4RmLg8NgZlGXpIoKSh6447ugajHEQDqqHGXQPMj9+3gEI3HQtiopl6husbS/CSCPBvoTuMgMxoyjT9xvhqKgGVx5neX0kWV1sp3S/RiYSSDCX4AgGGnHeJaJZMbj0u9GW6JoJYeS+3wh6UEkXr9TThHj49xpTTzSi4RNWguoXKAu+LQGaz26goTHNT5dsoOy11A3Ah3BynSIQUUli2HjFTmKyBSqNkTREaayjUqpARUO21r0WEn5gN/wSOeH+kBD5426K5YO0i/UwkASRD+oWKCz5Zi5VMNaDP8ATRNNE00TtfC+nGnNLS44q//ki0Nc8c26cYO6M0RC7pQrsnn3syaIpTDn6fpnUaBYu2/ZxC6l/CFtQchnFymxdnL7FSUPzv9/k4mTLpkAAAAASUVORK5CYII=" x="6" y="38" width="49" height="13"/>
+<image class="tree-b" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAcCAYAAABlL09dAAAC20lEQVR42q2Vz29MURTHP+e+N9MZ1LQzrVarxYKo34NKaqrqR0QQGwsJ/wcSJCNRgoWt/0HChqWoaiIWIyLUj0gIHenUtDQV0/bN3GMx02m1od7wXb3cc98n537PPfcIc3W2tZZAdD02/5GeF5+oUGbeiru0HeMdxaWDK5tq/w84uXEzLjtAaoB2vmtbpWCn/NWzfTme3Y9hLSBAEKGW3bEMfdnRysCnE9WYXAKj21CC5agQQUTYFRukP5vzb0XVt3WojaMsnrdD2IojcZKrQv7Al9pWImYnhgYA1CqqORSvRA7hmD3kl6z2B/YC7aBrUKTIcbIgT1D7GdSW4HUY2cfleL0PK2wcoaqYreZQUkjVfXAeg3yb2WrbmPA6/XgcLXmpYN5gJMXFVJbJqaeIvASZKMbFAdvBhS1xf/fYmjSm8ITk80EArr0Zh2A/agZRLRThphopHCK5vvEvwfID7DMIv/21YVIfEfMQkbFZqy3gHFoILAueKdkdQkaPYLUTNFT6axKvcJueV30Ld97v1PshT8fKYcRrAY0iYgAXx6wgEXvHo+xYZWCA/nSOfdGviLsBmG6UMGKi7B1+Ti95/+Bk0yI6GmoIYbFuGKS5XBshgi4L8HD4tX9we0uMoHsSdbtBW1GCSLk2Dmgde1d8pnfoy5/f47m6PjCEG3iPahhk0SxoiSBLKeSPcWNrjT8wgE7dx2oasPNjCEabGPWO+S9e75cpErERjNlUbv+5loqJ0NU4Tl8m/Xf3eLbObTyBK52gbilbD8/e5MrAwMIz708K2HuoZFGr0xOSgHOcq4nqfwMnB75j7J2ZhwkBrWdi/GBlDfKL38MZuhpjQCuCIDhAjP2Nn3iQGaks42lNBe+BZGduhlbj6WHObI/8G/hqaoyCuYswWeYYWgjnd1duxbQeZdJ01TeANJeaJoBqhANNaR4MjUpF0PObi4NVCnWInJoZbXiovMCL3PoJOn/s9cq6LBMAAAAASUVORK5CYII=" x="31" y="10" width="22" height="28"/>
+<image class="tree-a" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAdCAYAAADCdc79AAAEN0lEQVR42sWXz2+URRjHP8/Mvm0XFgrtFhBaUguh2NKiVIrIlhbQEH9w48C/oTFGEcIrwoELV08mHj2YaCJ4wUBTgyCCgCwNICAJFqhbC126tN3ddx4PXbcl3ZbSpTC3d955Zr7zfJ/vd2ag2OZ3lPEMmy0q+qPmuYSGN7Op4hE/9w0+C0CmqOhIei0E7xCy7+K3zHmxgD5ZXYvaHQilCKshaH1xlB2qn0fg7UKkBgDFQ7WCtsq7dPX1P/8MpWwMwyv5b0FAqzCylU9bK58voL2rmxB5a0K/4CFmBd5Q6/OjzG9ehHM7MWZRDoQCKRQPQVBKMFJOR3SAzsS92QXkd5RBagdimgDJ1c4gji4sYaA8R10YJ2Halz6iqzcxe5QFiRacrhsX4xB7lpDrBHMcNJnjLoSVOsS9P3s1tGfNCkQ6MDLmyspNSs0J/O5ByMZRzgAu928uorWzA+hQ/TyMbEV0CZqjSkwKV3aE3edHKfG7Bwkyp1GuzL4xpmwMo/UgoXwhu+AYB85efWzcwWs9qHahmigGUGhqiTeuBWkFxh0LcgHjThYcP2SvE9HTqG4HSti35kuUEeAY++NHi1PZvlVR1LyHYTmIzdXGv2T5hi8u9xWM+aU3Q0f0IarzEFmWX0NdGe1V9+lKJGZOmXrtGHk5T5VKgLofOBi/PbU9dN9DvTOI9ORd3MgyrF3P7jWLZ5ahvQ0bMBJDJectACaOZi4Sm1/Ktqils3+koFe9HakknXWoLR3NLgbEIFKJaIoty+/SeTcz/RryG5ZDaCPqomNgANFVhLwa1FNIfwUkJ8Smexfi7E48+xLOlaDY/AyqYYQ3CdJ3gEvTo+yD6jCYzThXN5FOLUNZCPYG/rWbBWcrGboPGkcpR5j72IZGWxTr2jiwdtn0AJUv2IBqI4JXuK50AJnz/eT1c2uY0kg3mPOFB4hBpZHhkdfwGyJTA9rTXD8qcVkwuQRKfsQ/NfV957Nfe3FyCrRv0iQYs5lAVhSEXHinTXUEugtDTb7P2YvYga/xbw0/0UwOV4dJzm9HzY78pp3rx5nvOBg/+/SyD1wMYck43A+wemRaYAA+/HsIQnFEL6Po6EqmAst6/Obqp5P93oY2jHkDIZL3H5GjfP7Hxac6Azp7k2xarFhqgXCOjyqUAdaV9HA6mX1yhj5eWY3Y14GKcdn5E0n+PqODyXNXEPkNJDO2nm4gMr/uyRnyW+YQslsQmvL+JDJAkP6W/Td6ZgSoM5EmtnAETBWGaM63I6gI2xfd4fg/qckzFAw34rQB9P87TwZnThCK3C7qPnHg6l9gzuN4ME5Kr5J2jfi1ZYUB+fVLsdKC1SW5Q1QRrpMNLuCfe1T0Y+th8hKqfwDp/IPA2RjZcM1E2R/eGKZ/cAuWbaC5a4ZkMfxEJtsNXvaZPNqNW4lIG2jVmJW4k6g5Byav3v8AjjtxBeVubFgAAAAASUVORK5CYII=" x="8" y="9" width="36" height="29"/>
+</svg></span>
+<span class="label">Landscaping</span>
+</a>
+<a class="item" href="#paving">
+<span class="ico i-pave"><svg viewBox="0 0 60 60" aria-hidden="true">
+<image class="q1" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAACH0lEQVR42p2UTWsUQRCGn+ru2dldidEcsiASyNHgevPgNT/KBLwsgujJH+PBuwdPXoISwa+DBBQSJGrifsxO9+thJ5vZcRXWgmYapuuZt+qtaeMint7rcHTEQqz3jBVjlrDX75PZNlgADy4KgKxVA8bG01crLgAD9+/cJHO7eO1ATMSpkAQOigjeWe3ToFTtVMFUwyUFOqGNo4WmAg1xnBEpUSkcEJ3h3WVeukDHZrUZ6GpgWIjMJzITpg/Iv8LsfK6o1Ujzf2leUW6isBvorhlxDOU4gT8l858YHHxf1Qz2dkZ4GwcAHFAiiGvAFoP+xvKsHMpClIVot4YMXh83T4T5zgGK2+A2cFYu5aUJqEx4D1OdsN9/zpM3p9QggTYwAswZxjWwjUXngJRUGTKz15shemT+JVABO6ComcLgjGRGcl8xviCKOUwVLLrLSjAh+8Z5OlmcarNQl4vFzxTxBTH8/KetbS8eNo0bAVnVQyXNlk3I8h88+g+Xq57M6pj1z5YM68oR5lOfANwNUnmXB7d/kTVOTgPkPpJGhwzenv+J6oAKhbpcTFuYbeJIuLTwiiyBgtD1HvBs+VUTGqaIHJHPII5Fw7whD+Oyu7zYEcjXFQLSe8wOkYY0a54KiIkie7eUdzYR3VYD6DlmMj7g8ceTld1Yyw3MXOOPiOTl9P89diwqTP4WRXed/X6xfMyczS9pJYEHn4Flhoor5NPebx9C39bvgLwhAAAAAElFTkSuQmCC" x="10" y="10" width="20" height="20"/>
+<image class="q2" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAACw0lEQVR42qWUP29cVRDFfzP3vrdeW8ZxlARh/hQpkIhCZAyiR1BQ09DxCWgoiBIB0kogAaKgo+BTREKiQBGCFCkiihRgIRGiYEUiCcbB3rW9+96dGYpdrxPHARROde/VzJmjmTNX6L04y0Fs3o7peeFx4d+weTtYyEHvxlD4cOWN8WuCMgmIJkiTsyJMLwmww0ndR2yNfsx48xqhQAEnwMcBhXGyiCAmiE7I9sUjHntVcTPCn8ljkhhSbJMImxICiMqUVA9RpgSOgB/HTGhsJiMquNwk5HuU7Yf2qXrIu0pmxFtIzJFdMpGEiD714nV63/3Fo+Ds6ZYOQpU1YwSkOaz/NO+fWSSHUJq4L8FswMfX/gDgnVNH6fhj5BDogElF8YRFgJJxBYkl4HWIghfQfM/0gKJ/8u6pb/hs9Ra5fYWcn0JF8QAtQtLuXlPHmeHzSJlHHSQJKIQHqoIAyi7aXuHssW1Iz6PpxLiSgQApAhVoIaMO2DriNwgaSDL1nEwU4hsMd+7w+XqfcycugTxBURnbMxRNK4RXABltwfmdhotI6t9nmz10d3f59OYQgE9Wv6W3fAQ3wYEZrWjlOZQJIQ4aDd3OFr2r/23KB+POr/ieT3V/pY7wyLCJKxQyJYPKMXzzJd5b3kElqLt3+ODyrwC8/cISi/lJ+pKxEnRzYTD4mS9WB/cwTrVl6iQES5gtEOaEQKt3Of/yVwzkFt3tV4FnmRHBIphFqGcvA18fJjZPdr3GqYjWaR2IwFINO9CpF5nhOMmCoTmNCabVgZ2eNi8TEaisoekHrNpFC5hssFX9xpfXduidvEDkK7SSsRy0bYPpLw/u9NhumQLUskGSq3z00/qDE72+Bqz941BSEvY/MsDckfnC/4VDphYFTlLuvsm55RGiQnhgQPGgAlQFn2xGU5w6K6UNZBRonahsbvw5JP4Gxcs1I8ANkUIAAAAASUVORK5CYII=" x="30" y="10" width="20" height="20"/>
+<image class="q3" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAVCAYAAABG1c6oAAACSElEQVR42q2UPWtUURCGn5lz9pOISjRRsZAQLSR+FRYBKys7G3+HYCFGEFxMoWjhj/BvWAoWsdhCBE1hwBRRQoxuNtmPc85Y3N3N3ptoSPAtLvfcmfPemXlnRng+P0uvc5fUn2GIBCTNXpQxGHshEMQoi0MSPm9TMAUUVAYEib/CLPtDCVAxYpEwhQ+oe0/FWhwWO+EsKd7JE6Lb4NZ40tw8NOH9W45ap+cLKVSAEzTmdyv3C6hsGakXePk5H/nClZNUJ4TOltFtHUOdL9RQrhLiLKEdd+tjgiWjUl7jwfk3vF7dAeDxjXlcvE2n5TN78Hh3vEBoNZQ6ZcuEyeQGVYE4SWViGlihcaFK1+awdA7XB1Gh4pSYzI8pLMAmiQ2ShrFOMUQFsw2mtr4D0FjpsHC9CeUKap4YjOTqmJvyg8iEmEDtI869ZbH540ARXjSXgKXR+enlWYK7p/m2SRF+9zgKOrUepqb8T5izvCgqp+nX51i41v7nxSgGtHnVXM5nSHFSZAbhDBqKQ5yH92Cs07jZorG0NvpeMilEaFXQasa1zyIYjrXGwRxHX3QoRKhfUVkmpZ19IxsFHSHZTxY/rRaWi3g63axxBcFsFeu949mX9SOJEocqxwQmkjVxLxxZ5VQaT9kAu0S3XuPhxQ64QZpOQEfHXfShH21kiO0JytXJjNAlCMnApnFyCl+y3EZWZG89FZwaqTRwS4IF55G0Tqv/jRAngRLeZ9tavOwv8RCOfGspQMguPZo5TrdSJyShDmSPA7C9r98fn0vsEIhTLIkAAAAASUVORK5CYII=" x="10" y="30" width="20" height="21"/>
+<image class="q4" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAVCAYAAABG1c6oAAACYUlEQVR42pWUsWsVQRDGfzO7l7zEqBA7Q4ogIgmBaCy0ErWwEASx9i+wtBAhKQJpLcRC/GMstBMrtYhioTZBkRRCyMvdu9sZi7v3ksu7EDKwcDs78+033+yNsLnyBhQUKM0xd1BI5pg4IoIAIoJSm6jg5igCydFKKN3Iw89IkQx1kOggkMwggWcCgOM4IDgGBJHao4CCOFTuzVVEMEi2RZa9Jfou2ZBGgiofBY4s9mT0XeXOQDPgCcpMAxhBbB/SH9Y//+Mk27jdY+Nd3vI9XyyJ9acSRAgq7aSlGTaWZsbBrl2kLB6wduNm+yA0S1E8tct6ujzPQB8yiI9YW5lrne2Xd4n5LSbyx60LrVl1yc0mDDuYFtC4TNRzEL8B26PEzKfQSigqIRWhS5HYFH5g2VQEU1wE03ZSZTtk2QCTPimrjgc8zNCSYwKi49E5H0gpUoRtXn3a6wJUTmMvv/7mTP89s4Mvx4Uo1oU5VLlsuzcvL8LkfaR3pxvOOhhqENRAbTx+T1dxVvF0j2dXznYDjiVWDbsER3VPOkUChAwp22TcHTPXzjYFrQcCp5Q9gCJBxgie1hQINYWIZY1nugHsgebORIeGJFChmT9tvyQIKorFI7qmejS5jjUZbf55Mx97FWKCiAjrV1+D72D2g9IKNMwRmSdYRvLvFPqX0Lx6TYtEmUUQ3D+SW4F6IKbrRCYoJn9FtALnAsHOkym4h5oeQLzEJAsMK9Qs4i711lbpeT3R3QMJx4JFitDMNjkkSDhGfUvt/TAnViTJqcJWxPXFQav6B8050QQYztlp6BfGLrv/Adi39K54qcWSAAAAAElFTkSuQmCC" x="30" y="30" width="20" height="21"/>
+</svg></span>
+<span class="label">Paving</span>
+</a>
+<a class="item" href="#snow">
+<span class="ico i-snow"><svg viewBox="0 0 60 60" aria-hidden="true">
+<image class="flake" href="data:image/png;base64,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" x="13" y="11" width="35" height="38"/>
+<circle class="f1 ghost g-fill" cx="9" cy="10" r="1.2"/>
+<circle class="f2 ghost g-fill" cx="52" cy="14" r="1.1"/>
+<circle class="f3 ghost g-fill" cx="49" cy="46" r="1.1"/>
+</svg></span>
+<span class="label">Snow</span>
+</a>
+<a class="item" href="#facilities">
+<span class="ico i-fac"><svg viewBox="0 0 60 60" aria-hidden="true">
+<g class="speck ghost g-fill"><circle cx="54" cy="47" r=".9"/><circle cx="56.5" cy="44.5" r=".8"/><circle cx="52.5" cy="43.5" r=".8"/></g>
+<image class="body" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAgCAYAAAAffCjxAAADBUlEQVR42uWUu4tdVRTGf2vtfc859xVuhkmGGAwWIjZWEnSw8FFFUFNZBgTrWFhZ+gcoNmIhKPgP2AYyIBZiGa0EjYogRgcyE+dxH3Pu2WtZnDt3zh3nZkaxc8E+L8769re+9e0lHI+bz5yjqB4HwFwAUPH5e5mMfO0H3rs9bKbJ/OndpztcuXCdyfQlnD7mih/+Feq7u4MLQbc4J59z4/bGYbrOgVYHzzGsXsV8AB4QUVQUd8WqeokHFCWlVR4c3ODja1cXgd556jwxXsctp0KZUrNxQGd7qR7xFxFcO5TT1xeBHl17kWm5iroDJYhjLA9ljCskucwH19aPgFY6FeoPCCEh8h3Bba4PDVY+u+b5Hdo6ItgWPWnXYn/68gXS9A1GVQlhE2eFlj+PHSrciAQojvEZiQE5F3GNZPmHyt5wwCg9iYR1VrKsLslPLinMamhpSStdBn+WmB4j288Uy7u4FJTAz39u1i2ehc1W0ywyY9Zp3SOZMkld7o1zpbI2ghLF2J38WqsmYHYCUqPGrdFO3VWPtLtRGZUdAlB4oih2cHNOjQDjtEuGkQVQDcpBKmpfiNONJR5lmUQ4YLPSlTEWhKTKeBIjyXQmcG23ZYzcHeEXirALseJ3ICmoQZVJpB2nBBzE8VKhVW/tIshsdzOIJNrZ97jlbJdjHulHbm40nF3oCLRO3C4LBMFFGkzuE2QPN+egGvPb/TusFK8Q0ptNwpFe3MctgRhDFwRH5p5PJL6kl11ib7LO1F9jcH7EJH1CCJNFIMt/pJx8TUuHPNHeXDxTUmsT1PAgiCnQ56Ds8PYXXy0CvXVrF/ho/uX9F7w5XebGFHeCChVO1BPO8VnDRR42EZYA+aIFzAV3SFZ3VP9ukdMZpWWn99+Wdkr8/4Ae3uqzAYkuHyP/CCiZ/zelHTLyxpQ1WxxuEuR4WjxBHgc/GvJ2jGFyQaozMMrDDlMzBKNFReQPhmkbl4SoE1IihNHpjOhuUKQ1JnaF2PqJ1PuGPN5lsn8Rn16il9+l3//2eNZf3upR9QZb67EAAAAASUVORK5CYII=" x="13" y="18" width="18" height="32"/>
+<image class="head" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAICAYAAAAvOAWIAAABAUlEQVR42k2PPUoDURgA53tvN7tGXRQVgwj+dV7Axk608ApWXiJ4Amsv4AnsQ4KSSitFYiOooAFbMVlUJLv7vc9K2KmnmBEAzvdXKDgANkEV5Ils0uPoekQN4XRvgfmojZbrgGCAk4DKD4XmJP6N/PeWZniIyNwhoVjDRPCSo8yiQUAyGpIBLRZntomTs4hSdmk4jwM0fOLsjtKWcQ2PWQE2ZFwMOOk9RVQoDsEFwG0RbJVKxzT54Ds80+5f/Dc7pq0LQTEEAqilmGtRVRsspS/1QYeVfebSe8qgVCKYh9hPSJIbjjuDuuzpDAt2Wo+kU2PQnFheacaXjL66XL0XdfkP5hlmqL9zHQwAAAAASUVORK5CYII=" x="18" y="10" width="11" height="8"/>
+<image class="machine" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAATCAYAAACQjC21AAACHUlEQVR42q3STUhVURDA8f/5uPd9+HyRoiVSUAmBFUESkW4qK3lZYEGF6xbSoiCCoCJwUcs2UtCuoE0ECQVBiJW0chm0EJLSBAtM8gPT9+4990yLPuBBGdGdzWGGw48zM0dxp+smUdLEQnSVa68m+M+wZMxrAi+gY1IITeRaET1MEEbpgNpM4aSZs0Mz6YC+MoRhO7c669MB+168w/k3VPyedEAAp18SmBI3OtelA54bmiBnp6kL2tMBAWbnH6CljYFSMR3w8ugkmk/U0PGrNlAqcqmj9l9AU5X1tETgT7E3P8rzmTLtDftpyF/k4KY2TreEbMnOMfp5ZTVQVWX9+7Lk9XUKrCBukihuBLsLNGgcKIfysyimceFTLgyP/bllgP6RMstOqNCKD0rYoI1MJFinUCYElQO7EbG7SWQrD0+uWR38WdF4PEISgA81BKC0oA2IFsQaDD3MLV7h9qHDq4PWTqPlPZZFtAgSgjKgBBDQAjoBTYFKvJlAd9HfWvj9DAeP1/Nl+QyxFGkqjPBx8QSJNFZfk++HV6CTJQr5J5TdNoSI5sy96i0f2HAU8QWMestyuRvR4xjbgCiP4EElQAKSYHxMYCfwrhGlPkDi+Op32iow8kWUnsWqcSLXzUL5Gbn8ILFX2FDhoh/PKwNZWJpPWL+2jyiZImNqiOId1WBdZpgl10tCC7na+5wfGfvrT7577DHllSMgnnz20TePTMp9bBtiqAAAAABJRU5ErkJggg==" x="28" y="31" width="20" height="19"/>
+</svg></span>
+<span class="label">Facilities maintenance</span>
+</a>
+</div>
+</section>
+<section class="study" aria-labelledby="study-title">
+<header class="study-head">
+<p class="eyebrow">Case study · 01</p>
+<h2 id="study-title">23 animated icons in about an hour, with AI</h2>
+<p class="lead">Each hover above is a small micro-interaction: gears that mesh, a crane that swings, a trowel that smooths concrete away. None of it was hand-animated. It came out of a short back-and-forth between a designer's eye and an AI agent, with the original artwork kept intact.</p>
+</header>
+<dl class="stats">
+<div><dt>Time</dt><dd>≈ 1 hour</dd></div>
+<div><dt>Prompts</dt><dd>5</dd></div>
+<div><dt>Icons</dt><dd>23</dd></div>
+<div><dt>Pixels changed at rest</dt><dd>0</dd></div>
+</dl>
+<div class="block">
+<div class="block-title">
+<h3>How it came together</h3>
+<p>Four versions, each one fixing what the last one got wrong.</p>
+</div>
+<ol class="steps">
+<li>
+<span class="step-no">01</span>
+<div>
+<h4>Redraw and animate</h4>
+<p>The AI rebuilt every icon as SVG so its parts could move on their own: fan blades spin, the hammer strikes, the trees sway.</p>
+<p class="tags"><span class="tag good">Lively motion</span><span class="tag miss">Icons redrawn</span></p>
+</div>
+</li>
+<li>
+<span class="step-no">02</span>
+<div>
+<h4>Keep the original artwork</h4>
+<p>The icons were cut from the screenshot pixel for pixel, but a flat image can only move as a whole: it spins, bounces or shakes.</p>
+<p class="tags"><span class="tag good">Exact icons</span><span class="tag miss">Motion felt static</span></p>
+</div>
+</li>
+<li>
+<span class="step-no">03</span>
+<div>
+<h4>Cut the artwork into layers</h4>
+<p>Each icon was split into its natural parts (gears, forks, the wrecking ball), with every pixel on exactly one layer. At rest the layers rebuild the original exactly; on hover they move independently.</p>
+<p class="tags"><span class="tag good">Exact icons</span><span class="tag good">Lively motion</span></p>
+</div>
+</li>
+<li>
+<span class="step-no">04</span>
+<div>
+<h4>Direct a single moment</h4>
+<p>With the system working, one icon got a precise brief. The trowel sweeps across the splash, and a slanted mask riding along the blade's edge makes the splash vanish under it, then reappear on the way back.</p>
+<p class="tags"><span class="tag good">Storytelling detail</span></p>
+</div>
+</li>
+</ol>
+</div>
+<div class="block">
+<div class="block-title">
+<h3>The prompts</h3>
+<p>Plain language, written the way you'd talk to a teammate. Lightly trimmed for reading.</p>
+</div>
+<div class="prompts">
+<figure class="prompt">
+<figcaption><span>Prompt 1</span>The brief, plus a screenshot</figcaption>
+<blockquote>“I'm sharing a card with you that contains some icons. Make a section where I can hover over an icon so it animates. Animate all of those icons, and make them react when I hover my cursor over them.”</blockquote>
+<p class="outcome">Set the goal and the visual reference in one message.</p>
+</figure>
+<figure class="prompt">
+<figcaption><span>Prompt 2</span>Clarify the behaviour</figcaption>
+<blockquote>“Whenever I hover over the section, the icon should animate by itself. Add animation that fits each icon.”</blockquote>
+<p class="outcome">Hovering anywhere on an item triggers it, and the motion should match what the icon shows.</p>
+</figure>
+<figure class="prompt">
+<figcaption><span>Prompt 3</span>Set a hard constraint</figcaption>
+<blockquote>“I like the approach, but don't change the illustrations. The illustration should stay the same.”</blockquote>
+<p class="outcome">The artwork became non-negotiable, and a rule that could be tested.</p>
+</figure>
+<figure class="prompt">
+<figcaption><span>Prompt 4</span>Judge the result, point to what worked</figcaption>
+<blockquote>“The consistency of the icons is good, but the animation wasn't. It looks very static. Your first version's animation was good but the SVG was lacking, so use the current icons and take the animation from your past outcome.”</blockquote>
+<p class="outcome">Combined the best of two versions and led to the layer technique.</p>
+</figure>
+<figure class="prompt">
+<figcaption><span>Prompt 5</span>Direct one interaction</figcaption>
+<blockquote>“In Concrete &amp; Rebar, I want the tool to sweep from the centre to the right over the splash, making it disappear, and when it comes back to normal, the reverse.”</blockquote>
+<p class="outcome">A single, cinematic beat described in everyday words.</p>
+</figure>
+</div>
+</div>
+<div class="block">
+<div class="block-title">
+<h3>What made it fast</h3>
+<p>The AI did the heavy lifting. Design judgement steered it.</p>
+</div>
+<ul class="lessons">
+<li><h4>Start from a picture</h4><p>One screenshot carried layout, colour, type and all 23 icons. No spec document needed.</p></li>
+<li><h4>React in plain words</h4><p>“It looks very static” was enough feedback to change the whole approach.</p></li>
+<li><h4>Point back at what worked</h4><p>Naming the earlier version as the reference saved re-explaining the motion style.</p></li>
+<li><h4>Make constraints testable</h4><p>“Don't change the illustration” turned into a check: zero pixel difference at rest.</p></li>
+<li><h4>Give motion meaning</h4><p>Gears turn, a ball swings, heat rises. Each animation says something about the trade.</p></li>
+<li><h4>Respect the rest state</h4><p>Icons finish their loop when the cursor leaves, work with the keyboard, and stay still for reduced-motion users.</p></li>
+</ul>
+</div>
+<div class="block">
+<div class="block-title">
+<h3>Under the hood</h3>
+<p>Plain web tech, no animation library.</p>
+</div>
+<ul class="stack">
+<li><strong>Pixel-exact layers</strong><span>Original icons split into PNG parts</span></li>
+<li><strong>CSS keyframes</strong><span>One small motion per part</span></li>
+<li><strong>SVG masks</strong><span>For the trowel's wipe effect</span></li>
+<li><strong>~20 lines of JS</strong><span>Start on hover, finish the loop on leave</span></li>
+</ul>
+</div>
+</section>
+<section class="orbs" aria-labelledby="orbs-title">
+<header class="study-head">
+<p class="eyebrow">Components</p>
+<h2 id="orbs-title" class="orbs-title"><span class="sec-no" aria-label="Section 2">02</span>A reactive orb for AI states</h2>
+<p class="lead">A fluid orb for voice and AI moments. It drifts gently at rest; click it to pulse and switch into a quicker, active flow.</p>
+</header>
+<div class="orbs-grid">
+<article class="orb-card">
+<div class="orb-card-head">
+<div>
+<h3>Smooth-paced reactive orb</h3>
+<p>Active speed tuned for gentle, fluid motion · tight 7px rim glow</p>
+</div>
+<span class="state-pill" id="ro-pill"><span class="state-dot"></span><span id="ro-state">Ready · Click to pulse</span></span>
+</div>
+<div class="ro-stage">
+<div class="ro" id="ro">
+<button type="button" class="ro-btn" aria-label="Pulse the orb" aria-pressed="false"></button>
+<div class="ro-glow" aria-hidden="true">
+<div class="ro-mesh"><div class="ro-counter">
+<div class="ro-blob ro-base"></div>
+<div class="ro-blob ro-b1"></div>
+<div class="ro-blob ro-b2"></div>
+<div class="ro-blob ro-b3"></div>
+<div class="ro-blob ro-lilac"></div>
+</div></div>
+</div>
+<div class="ro-wave" aria-hidden="true"></div>
+<div class="ro-sphere" aria-hidden="true">
+<div class="ro-mesh"><div class="ro-counter">
+<div class="ro-blob ro-base"></div>
+<div class="ro-blob ro-b1"></div>
+<div class="ro-blob ro-b2"></div>
+<div class="ro-blob ro-b3"></div>
+<div class="ro-blob ro-lilac"></div>
+<div class="ro-flash"></div>
+</div></div>
+<div class="ro-rim"></div>
+<div class="ro-vignette"></div>
+<svg class="mascot" viewBox="62 68 483 304" aria-hidden="true">
+<defs><clipPath id="mascot-body"><path d="M62 170A102 102 0 0 1 164 68H420A125 125 0 0 1 420 318H205C140 318 92 335 62 372Z"/></clipPath></defs>
+<path fill="#fff" d="M62 170A102 102 0 0 1 164 68H420A125 125 0 0 1 420 318H205C140 318 92 335 62 372Z"/>
+<g clip-path="url(#mascot-body)"><g class="eyes"><g class="eye eye-l"><circle cx="202" cy="192" r="41" fill="#141212"/></g><g class="eye eye-r"><circle cx="400" cy="192" r="41" fill="#141212"/></g></g></g>
+</svg>
+</div>
+</div>
+<p class="ro-speed" id="ro-speed" aria-live="polite">Ambient: <span class="mono em">5.5s</span> · Active: <span class="mono li">3.8s (smooth fluid)</span></p>
+</div>
+</article>
+</div>
+<div class="chat-demo">
+<div class="chat-frame">
+<section class="bot" id="bot" aria-label="B-BOT chat demo">
+<header class="bot-head">
+<span class="bot-title"><strong>B-BOT</strong><span id="bot-status">Online</span></span>
+<span class="bot-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r=".6"/><circle cx="12" cy="12" r=".6"/><circle cx="19" cy="12" r=".6"/></svg></span>
+<button type="button" class="bot-icon" id="bot-close" aria-label="Close chat"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+</header>
+<div class="bot-body" id="bot-body" aria-live="polite"></div>
+<form class="bot-input" id="bot-form" autocomplete="off">
+<input id="bot-q" type="text" placeholder="Ask a question..." aria-label="Ask a question">
+<button type="submit" class="bot-send" id="bot-send" aria-label="Send">
+<svg viewBox="0 0 24 24" class="i-mic"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+</button>
+</form>
+</section>
+<button type="button" class="bot-launch" id="bot-launch" aria-label="Close chat" aria-expanded="true" aria-controls="bot"></button>
+</div>
+<div class="demo-side">
+<h3>The orb in a chatbot</h3>
+<p>Here the orb is the bot's avatar, so its motion shows what the assistant is doing. Watch it while the answer comes in, or click it to make it pulse.</p>
+<ol class="orb-states" id="orb-states">
+<li data-state="idle" class="on"><span class="st-dot"></span><div><h4>Idle</h4><p>Rests without a glow while the chat waits for you.</p></div></li>
+<li data-state="thinking"><span class="st-dot"></span><div><h4>Thinking</h4><p>Glows steadily and breathes while the answer is prepared.</p></div></li>
+<li data-state="answering"><span class="st-dot"></span><div><h4>Answering</h4><p>Pulses with the words as they appear, glowing brighter as the text flows.</p></div></li>
+</ol>
+<div class="demo-actions">
+<button type="button" class="demo-btn" id="demo-replay">Replay demo</button>
+<span class="hint">Or tap a suggestion, or type your own question.</span>
+</div>
+</div>
+</div>
+</section>
+<section class="study" aria-labelledby="orb-study-title">
+<header class="study-head">
+<p class="eyebrow">Case study · 02</p>
+<h2 id="orb-study-title">From a plain avatar to an orb people notice</h2>
+<p class="lead">The chatbot on the current site sits behind a small, flat green circle. It looks like every other help widget, so most visitors scroll straight past it. We replaced it with a living orb and a friendly face that shows what the bot is doing, so the chat earns attention instead of waiting for it.</p>
+</header>
+<dl class="stats">
+<div><dt>Prompts</dt><dd>11</dd></div>
+<div><dt>Bot states</dt><dd>3</dd></div>
+<div><dt>Reference</dt><dd>1 recording</dd></div>
+<div><dt>Libraries added</dt><dd>0</dd></div>
+</dl>
+<div class="block">
+<div class="block-title">
+<h3>Why change the avatar</h3>
+<p>The old avatar was easy to ignore. The new one is hard to miss, without being loud.</p>
+</div>
+<div class="compare">
+<figure class="compare-card">
+<div class="compare-stage">
+<span class="old-avatar" aria-hidden="true">
+<svg viewBox="0 0 24 24"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="13" width="4" height="6" rx="1.5"/><rect x="17" y="13" width="4" height="6" rx="1.5"/><path d="M19 19c0 1.5-1.5 2.5-4 2.5h-2"/></svg>
+</span>
+</div>
+<figcaption>
+<span class="tag miss">Before</span>
+<h4>Plain avatar</h4>
+<ul>
+<li>A flat green circle with a generic headset icon</li>
+<li>Sits still, so the eye slides past it</li>
+<li>Looks the same whether the bot is idle or working</li>
+<li>No personality to invite a first question</li>
+</ul>
+</figcaption>
+</figure>
+<figure class="compare-card is-after">
+<div class="compare-stage">
+<span data-orb-slot="88" aria-hidden="true"></span>
+</div>
+<figcaption>
+<span class="tag good">After</span>
+<h4>Reactive orb with a face</h4>
+<ul>
+<li>A soft swirl of the site's greens with a gentle glow</li>
+<li>Slow motion draws the eye from across the page</li>
+<li>Shows idle, thinking and answering at a glance</li>
+<li>The speech-bubble face makes it feel friendly</li>
+</ul>
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="block">
+<div class="block-title">
+<h3>How it came together</h3>
+<p>Five steps, each one shaped by what the last one showed.</p>
+</div>
+<ol class="steps">
+<li>
+<span class="step-no">01</span>
+<div>
+<h4>Bring the orb in</h4>
+<p>An existing swirling orb was rebuilt in plain CSS for this page, and a colour bug in the original was fixed along the way.</p>
+<p class="tags"><span class="tag good">Rich motion</span><span class="tag miss">Built for dark backgrounds</span></p>
+</div>
+</li>
+<li>
+<span class="step-no">02</span>
+<div>
+<h4>Make it at home on white</h4>
+<p>The stage went white, and the vignette, rim shadow and glow layers that made the edges look dark were retuned for a light page.</p>
+<p class="tags"><span class="tag good">Clean on white</span></p>
+</div>
+</li>
+<li>
+<span class="step-no">03</span>
+<div>
+<h4>Put it to work in the chat</h4>
+<p>The chatbot was recreated from a screen recording, with the orb as the bot's avatar and launcher. The first pass flickered on every word; the feedback asked for a smooth pulse instead.</p>
+<p class="tags"><span class="tag good">In context</span><span class="tag miss">Flicker felt nervous</span></p>
+</div>
+</li>
+<li>
+<span class="step-no">04</span>
+<div>
+<h4>Give each state its own look</h4>
+<p>Idle has no glow. Thinking glows steadily. Answering pulses in step with the words as they appear, then settles back to rest.</p>
+<p class="tags"><span class="tag good">States you can read</span></p>
+</div>
+</li>
+<li>
+<span class="step-no">05</span>
+<div>
+<h4>Add a face and a name</h4>
+<p>The brand's speech-bubble mascot, inverted to white, sits on the orb. Its eyes swap places along a figure-eight while thinking and drift gently while answering, always inside the bubble. The bot became B-BOT.</p>
+<p class="tags"><span class="tag good">Personality</span></p>
+</div>
+</li>
+</ol>
+</div>
+<div class="block">
+<div class="block-title">
+<h3>The prompts</h3>
+<p>Six of the eleven, lightly trimmed. A screen recording and an image did a lot of the explaining.</p>
+</div>
+<div class="prompts">
+<figure class="prompt">
+<figcaption><span>Prompt 1</span>Bring it in</figcaption>
+<blockquote>“Create another section and place the orb from this folder inside it.”</blockquote>
+<p class="outcome">Pointed at existing work instead of describing it from scratch.</p>
+</figure>
+<figure class="prompt">
+<figcaption><span>Prompt 2</span>Show it in context, with a recording</figcaption>
+<blockquote>“Place the orb in the chatbot area and show it like a demonstration: when it's giving the answer, the orb reacts.”</blockquote>
+<p class="outcome">A 16-second recording set the whole chat layout and flow.</p>
+</figure>
+<figure class="prompt">
+<figcaption><span>Prompt 3</span>Correct the feel</figcaption>
+<blockquote>“Not like flicker. I mean it pulses smoothly, also when I click on it and when it's giving me the answer.”</blockquote>
+<p class="outcome">One sentence turned a jittery effect into a calm one.</p>
+</figure>
+<figure class="prompt">
+<figcaption><span>Prompt 4</span>Tie the glow to the state</figcaption>
+<blockquote>“When it's idle it doesn't glow, when it's thinking it glows firmly, and the pulse follows the text as it appears.”</blockquote>
+<p class="outcome">Gave each state a clear, distinct look.</p>
+</figure>
+<figure class="prompt">
+<figcaption><span>Prompt 5</span>Add personality, with an image</figcaption>
+<blockquote>“Place this message-shape mascot over the orb and invert the colours: the eyes black and the body white.”</blockquote>
+<p class="outcome">An image carried the exact shape better than any description.</p>
+</figure>
+<figure class="prompt">
+<figcaption><span>Prompt 6</span>Direct the details</figcaption>
+<blockquote>“In the thinking state both eyes change position to make an infinity loop, and nothing spills outside the white area.”</blockquote>
+<p class="outcome">A precise motion, plus a constraint that could be checked.</p>
+</figure>
+</div>
+</div>
+<div class="block">
+<div class="block-title">
+<h3>Why an orb works</h3>
+<p>The reasoning behind replacing a static icon with something alive.</p>
+</div>
+<ul class="lessons">
+<li><h4>Motion gets noticed</h4><p>People notice movement before they read anything. A slow drift pulls the eye to the chat without shouting.</p></li>
+<li><h4>It shows the bot is working</h4><p>Glow and pulse turn waiting into feedback: you can see it thinking, then answering.</p></li>
+<li><h4>A face invites a question</h4><p>The mascot makes the bot feel like someone to talk to, not a support form.</p></li>
+<li><h4>Still on brand</h4><p>The site's own greens, a light background and the brand's bubble shape keep it familiar.</p></li>
+<li><h4>Calm by default</h4><p>No glow at rest. Motion only ramps up when something is actually happening.</p></li>
+<li><h4>Works for everyone</h4><p>It works with a keyboard and screen readers, and stays still for people who prefer reduced motion.</p></li>
+</ul>
+</div>
+<div class="block">
+<div class="block-title">
+<h3>Under the hood</h3>
+<p>Plain web tech, no animation library.</p>
+</div>
+<ul class="stack">
+<li><strong>One orb, any size</strong><span>Drawn once, scaled to 28, 56 and 200px</span></li>
+<li><strong>Blurred CSS blobs</strong><span>The swirl, glow and rim light</span></li>
+<li><strong>Text-driven pulse</strong><span>Each word adds energy, smoothed every frame</span></li>
+<li><strong>SVG mascot</strong><span>Eyes clipped so they never leave the bubble</span></li>
+</ul>
+</div>
+</section>
+</main>
+<script>
+// Start the icon animation on hover / keyboard focus. When the pointer
+// leaves, let the current loop finish so every part settles back into the
+// original drawing instead of snapping.
+document.querySelectorAll('.item').forEach((item) => {
+let stopping = false;
+const engaged = () => item.matches(':hover, :focus-visible');
+const start = () => { stopping = false; item.classList.add('is-playing'); };
+const stop = () => { if (!engaged()) stopping = true; };
+item.addEventListener('pointerenter', start);
+item.addEventListener('focus', () => { if (item.matches(':focus-visible')) start(); });
+item.addEventListener('pointerleave', stop);
+item.addEventListener('blur', stop);
+item.addEventListener('animationiteration', () => {
+if (stopping && !engaged()) { item.classList.remove('is-playing'); stopping = false; }
+});
+item.addEventListener('click', (e) => e.preventDefault());
+});
+// Reactive orb: each click sends a shockwave and bounce, and toggles
+// between the ambient flow and the quicker "active" flow.
+(() => {
+const orb = document.getElementById('ro');
+const btn = orb.querySelector('.ro-btn');
+const wave = orb.querySelector('.ro-wave');
+const sphere = orb.querySelector('.ro-sphere');
+const flash = orb.querySelector('.ro-flash');
+const pill = document.getElementById('ro-pill');
+const state = document.getElementById('ro-state');
+const speed = document.getElementById('ro-speed');
+let active = false;
+btn.addEventListener('click', () => {
+wave.classList.remove('go'); sphere.classList.remove('bounce');
+void wave.offsetWidth;                        // restart the one-shot animations
+wave.classList.add('go'); sphere.classList.add('bounce');
+flash.classList.add('on');
+setTimeout(() => flash.classList.remove('on'), 280);
+active = !active;
+orb.classList.toggle('is-reactive', active);
+pill.classList.toggle('is-active', active);
+btn.setAttribute('aria-pressed', String(active));
+state.textContent = active ? 'Active & pulsing' : 'Ready · Click to pulse';
+speed.innerHTML = active
+? 'State: <span class="li">Active · smooth 3.8s flow</span>'
+: 'Ambient: <span class="mono em">5.5s</span> · Active: <span class="mono li">3.8s (smooth fluid)</span>';
+});
+})();
+// The orb in a chatbot: a scripted demo of B-BOT. The orb is the bot's
+// avatar: no glow when idle, a steady glow while thinking, a smooth pulse that
+// follows the streamed text while answering, and one soft pulse when clicked.
+(() => {
+const BLOBS = '<span class="ro-mesh"><span class="ro-counter"><span class="ro-blob ro-base"></span><span class="ro-blob ro-b1"></span><span class="ro-blob ro-b2"></span><span class="ro-blob ro-b3"></span><span class="ro-blob ro-lilac"></span></span></span>';
+const MASCOT = document.querySelector('#ro .mascot').outerHTML;   // same face as the big orb
+let mascots = 0;
+const makeOrb = (px) => {
+const face = MASCOT.replaceAll('mascot-body', 'mascot-body-' + (++mascots));   // unique clip id per orb
+const o = document.createElement('span');
+o.className = 'corb';
+o.style.setProperty('--k', px / 200);
+o.setAttribute('aria-hidden', 'true');
+o.innerHTML = `<span class="corb-in"><span class="corb-fx"><span class="ro-glow">${BLOBS}</span><span class="ro-wave"></span><span class="ro-sphere">${BLOBS}<span class="ro-rim"></span><span class="ro-vignette"></span>${face}</span></span></span>`;
+return o;
+};
+const ANSWERS = {
+who: [
+{ t: 'p', html: 'Hi! Yes, Beam AI is designed for <b>general contractors, subcontractors, and suppliers (including distributors)</b>, and all three can use it.' },
+{ t: 'h', html: 'Who Beam AI is designed for' },
+{ t: 'ul', items: [
+'<b>Subcontractors</b> who want faster, more accurate digital takeoffs as part of their estimating workflow. See: <a href="#">Subcontractor software</a>',
+'<b>General contractors</b> managing multi-trade projects who need reliable quantities for budgeting and bidding. See: <a href="#">General contractor software</a>',
+'<b>Suppliers and distributors</b> who rely on accurate material quantities for pricing models and quoting. See: <a href="#">Suppliers and distributors</a>',
+] },
+{ t: 'p', html: 'If you tell me what trade you work in (HVAC, electrical, concrete, plumbing, steel, civil, etc.), I can suggest a more specific fit.' },
+],
+how: [
+{ t: 'p', html: 'Here is how it works, in three steps:' },
+{ t: 'ol', items: [
+'<b>Upload your plans</b> for the project you are bidding.',
+'<b>Choose your trades</b> and the scopes you need quantities for.',
+'<b>Review the takeoff</b> and use the organised quantities in your estimate.',
+] },
+{ t: 'p', html: 'Want to see it on one of your own projects? Ask me about booking a demo.' },
+],
+demo: [
+{ t: 'p', html: 'Of course! A short demo walks through a takeoff for your trade and leaves time for your questions.' },
+{ t: 'p', html: 'Share your <b>name, company and trade</b>, and the team will reach out to set a time. (This is a demo, so nothing is sent.)' },
+],
+other: [
+{ t: 'p', html: 'Thanks for the question! In this demo I can tell you <b>who Beam AI is for</b>, <b>how it works</b>, or <b>how to book a demo</b>. Try one of the suggestions below.' },
+],
+};
+const CHIPS = [['who', 'Who can use it?'], ['how', 'How does it work?'], ['demo', 'Can I book demo?']];
+const pickAnswer = (q) => {
+const s = q.toLowerCase();
+if (/demo|book|call|meet/.test(s)) return 'demo';
+if (/how|work|step|process/.test(s)) return 'how';
+if (/who|use|contractor|supplier|sub|distribut|trade/.test(s)) return 'who';
+return 'other';
+};
+const bot = document.getElementById('bot');
+const body = document.getElementById('bot-body');
+const form = document.getElementById('bot-form');
+const input = document.getElementById('bot-q');
+const send = document.getElementById('bot-send');
+const status = document.getElementById('bot-status');
+const states = [...document.querySelectorAll('#orb-states li')];
+const launch = document.getElementById('bot-launch');
+const launchOrb = makeOrb(56);
+launch.appendChild(launchOrb);
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+let run = 0;             // bumps on replay, so a stale script stops itself
+let busy = false;
+let currentOrb = null;
+let chips = null;
+const scrollDown = () => { body.scrollTop = body.scrollHeight; };
+const setState = (s) => {
+status.textContent = { idle: 'Online', thinking: 'Thinking…', answering: 'Answering…' }[s];
+states.forEach((li) => li.classList.toggle('on', li.dataset.state === s));
+for (const o of [currentOrb, launchOrb]) {
+if (!o) continue;
+if (s !== 'answering') calm(o);
+o.classList.toggle('is-live', s !== 'idle');
+o.classList.toggle('is-thinking', s === 'thinking');
+o.classList.toggle('is-answering', s === 'answering');
+}
+};
+// Click pulse, matching the big orb above: a soft press-and-swell with a
+// ring and glow easing outward.
+const pulse = (o) => {
+if (reduced || !o) return;
+o._pulse?.forEach((a) => a.cancel());
+o._pulse = [
+o.querySelector('.corb-fx').animate([
+{ transform: 'scale(1)', filter: 'brightness(1)' },
+{ transform: 'scale(.95)', filter: 'brightness(1.05)', offset: .25 },
+{ transform: 'scale(1.08)', filter: 'brightness(1.15) saturate(1.15)', offset: .6 },
+{ transform: 'scale(1)', filter: 'brightness(1)' },
+], { duration: 700, easing: 'cubic-bezier(.34,1.2,.64,1)' }),
+o.querySelector('.ro-wave').animate([
+{ transform: 'scale(1)', opacity: .85 },
+{ transform: 'scale(1.3)', opacity: 0 },
+], { duration: 750, easing: 'cubic-bezier(.16,1,.3,1)' }),
+];
+// the glow swells with the pulse, then returns to whatever the state shows
+const glow = o.querySelector('.ro-glow');
+const rest = getComputedStyle(glow).opacity;
+o._pulse.push(glow.animate([{ opacity: rest }, { opacity: .85, offset: .35 }, { opacity: rest }], { duration: 900, easing: 'ease-out' }));
+};
+// Answering energy (--e, 0..1): every word that appears adds a little, and it
+// eases off between words and drops at pauses, so the pulse and glow follow
+// the rhythm of the text. Smoothed every frame, so it never flickers.
+const live = new Set();
+let raf = 0, last = 0;
+const tick = (now) => {
+const dt = Math.min(64, now - (last || now));
+last = now;
+for (const o of live) {
+o._target *= Math.exp(-dt / 200);
+o._e += (o._target - o._e) * (1 - Math.exp(-dt / 90));
+o.style.setProperty('--e', o._e.toFixed(3));
+}
+raf = live.size ? requestAnimationFrame(tick) : 0;
+if (!raf) last = 0;
+};
+const energize = (o) => {
+if (reduced || !o) return;
+o._target = Math.min(1, (o._target || 0) + .2);
+o._e ??= 0;
+live.add(o);
+if (!raf) raf = requestAnimationFrame(tick);
+};
+const calm = (o) => {
+if (!o) return;
+live.delete(o);
+o._target = 0; o._e = 0;
+o.style.removeProperty('--e');
+};
+const botRow = () => {
+if (currentOrb) currentOrb.classList.add('is-still');   // earlier avatars rest
+const row = document.createElement('div');
+row.className = 'msg bot-msg';
+const av = document.createElement('button');
+av.type = 'button';
+av.className = 'bot-av';
+av.setAttribute('aria-label', 'Pulse B-BOT');
+const orb = makeOrb(28);
+av.appendChild(orb);
+av.addEventListener('click', () => pulse(orb));
+currentOrb = orb;
+const bubble = document.createElement('div');
+bubble.className = 'bubble';
+row.append(av, bubble);
+body.appendChild(row);
+return bubble;
+};
+const userRow = (text) => {
+const row = document.createElement('div');
+row.className = 'msg user';
+const bubble = document.createElement('div');
+bubble.className = 'bubble';
+bubble.textContent = text;
+row.appendChild(bubble);
+body.appendChild(row);
+};
+const meta = () => {
+const m = document.createElement('div');
+m.className = 'bot-meta';
+m.setAttribute('aria-hidden', 'true');
+m.innerHTML = 'now · <svg viewBox="0 0 24 24"><path d="M7 11v9H4v-9zM7 11l4-8a2 2 0 0 1 2 2v4h5.5a2 2 0 0 1 2 2.3l-1.2 7A2 2 0 0 1 17.3 20H7"/></svg><svg viewBox="0 0 24 24" style="transform:rotate(180deg)"><path d="M7 11v9H4v-9zM7 11l4-8a2 2 0 0 1 2 2v4h5.5a2 2 0 0 1 2 2.3l-1.2 7A2 2 0 0 1 17.3 20H7"/></svg><svg viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></svg><svg viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4zM15.5 8.5a5 5 0 0 1 0 7"/></svg>';
+body.appendChild(m);
+};
+const showChips = () => {
+chips?.remove();
+chips = document.createElement('div');
+chips.className = 'bot-chips';
+for (const [key, label] of CHIPS) {
+const b = document.createElement('button');
+b.type = 'button'; b.className = 'bot-chip'; b.textContent = label;
+b.addEventListener('click', () => ask(label, key));
+chips.appendChild(b);
+}
+body.appendChild(chips);
+};
+async function streamHTML(el, html, id) {
+const tokens = html.match(/<[^>]+>|[^<\s]+\s*|\s+/g);
+let acc = '';
+for (const tk of tokens) {
+if (id !== run) return;
+acc += tk;
+if (tk[0] === '<') continue;
+el.innerHTML = acc;
+energize(currentOrb);
+energize(launchOrb);
+scrollDown();
+await sleep(/[.,!?:)]\s*$/.test(tk) ? 140 : 38 + Math.random() * 30);
+}
+}
+async function streamAnswer(bubble, blocks, id) {
+for (const b of blocks) {
+if (b.t === 'ul' || b.t === 'ol') {
+const list = document.createElement(b.t);
+bubble.appendChild(list);
+for (const item of b.items) {
+const li = document.createElement('li');
+list.appendChild(li);
+await streamHTML(li, item, id);
+}
+} else {
+const el = document.createElement(b.t === 'h' ? 'h4' : 'p');
+bubble.appendChild(el);
+await streamHTML(el, b.html, id);
+}
+if (id !== run) return;
+}
+}
+async function ask(text, key = pickAnswer(text)) {
+if (busy) return;
+busy = true;
+const id = run;
+chips?.remove(); chips = null;
+userRow(text);
+const bubble = botRow();
+bubble.innerHTML = '<span class="typing" aria-label="B-BOT is typing"><i></i><i></i><i></i></span>';
+scrollDown();
+setState('thinking');
+await sleep(1400);
+if (id !== run) return;
+bubble.innerHTML = '';
+setState('answering');
+await streamAnswer(bubble, ANSWERS[key], id);
+if (id !== run) return;
+setState('idle');
+meta();
+showChips();
+scrollDown();
+busy = false;
+}
+async function typeInto(text, id) {
+input.value = '';
+for (const ch of text) {
+if (id !== run) return false;
+input.value += ch;
+updateSend();
+await sleep(22 + Math.random() * 30);
+}
+return id === run;
+}
+let played = false;      // auto-play only once, and never after a manual replay
+async function start(autoplay) {
+if (autoplay) played = true;
+run++; busy = false;
+const id = run;
+body.innerHTML = ''; currentOrb = null; chips = null;
+input.value = ''; updateSend();
+const hello = botRow();
+hello.innerHTML = '<p>Hi, I\'m B-BOT. Ask me anything about construction takeoffs.</p>';
+setState('idle');
+showChips();
+if (!autoplay) return;
+await sleep(900);
+const q = 'Who is Beam AI\'s construction takeoff software designed for? Can general contractors, subcontractors, and suppliers all use it?';
+if (!(await typeInto(q, id))) return;
+await sleep(300);
+if (id !== run) return;
+input.value = ''; updateSend();
+ask(q, 'who');
+}
+function updateSend() {
+const ready = input.value.trim().length > 0;
+send.classList.toggle('ready', ready);
+send.innerHTML = ready
+? '<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>'
+: '<svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>';
+}
+input.addEventListener('input', updateSend);
+form.addEventListener('submit', (e) => {
+e.preventDefault();
+const q = input.value.trim();
+if (!q || busy) return;
+input.value = ''; updateSend();
+ask(q);
+});
+const setOpen = (open) => {
+bot.classList.toggle('is-closed', !open);
+launch.setAttribute('aria-expanded', String(open));
+launch.setAttribute('aria-label', open ? 'Close chat' : 'Open chat');
+};
+document.getElementById('bot-close').addEventListener('click', () => setOpen(false));
+launch.addEventListener('click', () => { pulse(launchOrb); setOpen(bot.classList.contains('is-closed')); });
+document.getElementById('demo-replay').addEventListener('click', () => { setOpen(true); start(true); });
+// Live orbs elsewhere on the page (the case study's "after" card). They rest
+// idle, and every 10 seconds of being on screen play the thinking moment once:
+// the glow fades in, the eyes make one figure-eight swap, then it settles back.
+const IDLE_MS = 10000;
+document.querySelectorAll('[data-orb-slot]').forEach((slot) => {
+const o = makeOrb(+slot.dataset.orbSlot);
+slot.appendChild(o);
+if (reduced) return;
+const eye = o.querySelector('.eye-l');
+let visible = false, timer = 0, looping = false;
+const schedule = () => { clearTimeout(timer); if (visible && !looping) timer = setTimeout(loopOnce, IDLE_MS); };
+const loopOnce = () => {
+looping = true;
+o.classList.add('is-live', 'is-thinking');
+// end exactly when the eyes are home again, so nothing snaps
+eye.addEventListener('animationiteration', () => {
+o.classList.remove('is-live', 'is-thinking');
+looping = false;
+schedule();
+}, { once: true });
+};
+new IntersectionObserver((entries) => {
+visible = entries.some((e) => e.isIntersecting);
+schedule();
+}, { threshold: .5 }).observe(slot);
+});
+// Pause the heavy, blurred orb animations whenever they are out of view.
+const offscreen = new IntersectionObserver((entries) => {
+for (const e of entries) e.target.classList.toggle('is-offscreen', !e.isIntersecting);
+}, { rootMargin: '100px' });
+document.querySelectorAll('.ro-stage, .chat-frame, .compare-stage').forEach((el) => offscreen.observe(el));
+// Show the greeting right away; play the demo the first time it scrolls into view.
+start(false);
+const io = new IntersectionObserver((entries) => {
+if (entries.some((e) => e.isIntersecting)) { io.disconnect(); if (!played && !busy) start(true); }
+}, { threshold: .4 });
+io.observe(document.querySelector('.chat-frame'));
+})();
+</script>
+</body>
+</html>

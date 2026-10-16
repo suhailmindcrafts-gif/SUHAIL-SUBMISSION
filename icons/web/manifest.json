@@ -1,0 +1,482 @@
+{
+ "icons/layers/civil/gear-a.png": {
+  "file": "icons/web/civil/gear-a.png",
+  "mime": "image/png",
+  "x": 8,
+  "y": 8,
+  "w": 21,
+  "h": 21
+ },
+ "icons/layers/civil/gear-b.png": {
+  "file": "icons/web/civil/gear-b.png",
+  "mime": "image/png",
+  "x": 23,
+  "y": 22,
+  "w": 28,
+  "h": 30
+ },
+ "icons/layers/concrete/blade.png": {
+  "file": "icons/web/concrete/blade.png",
+  "mime": "image/png",
+  "x": 6,
+  "y": 6,
+  "w": 27,
+  "h": 29
+ },
+ "icons/layers/concrete/flag.png": {
+  "file": "icons/web/concrete/flag.png",
+  "mime": "image/png",
+  "x": 26,
+  "y": 8,
+  "w": 27,
+  "h": 21
+ },
+ "icons/layers/concrete/handle.png": {
+  "file": "icons/web/concrete/handle.png",
+  "mime": "image/png",
+  "x": 14,
+  "y": 22,
+  "w": 10,
+  "h": 32
+ },
+ "icons/layers/demolition/ball.png": {
+  "file": "icons/web/demolition/ball.png",
+  "mime": "image/png",
+  "x": 39,
+  "y": 17,
+  "w": 11,
+  "h": 30
+ },
+ "icons/layers/demolition/crane.png": {
+  "file": "icons/web/demolition/crane.png",
+  "mime": "image/png",
+  "x": 11,
+  "y": 11,
+  "w": 35,
+  "h": 40
+ },
+ "icons/layers/drywall/hammer.png": {
+  "file": "icons/web/drywall/hammer.png",
+  "mime": "image/png",
+  "x": 14,
+  "y": 11,
+  "w": 33,
+  "h": 38
+ },
+ "icons/layers/earthwork/gear.png": {
+  "file": "icons/web/earthwork/gear.png",
+  "mime": "image/png",
+  "x": 11,
+  "y": 12,
+  "w": 39,
+  "h": 35
+ },
+ "icons/layers/earthwork/wrench.png": {
+  "file": "icons/web/earthwork/wrench.png",
+  "mime": "image/png",
+  "x": 22,
+  "y": 23,
+  "w": 17,
+  "h": 25
+ },
+ "icons/layers/electrical-contractors/bar.png": {
+  "file": "icons/web/electrical-contractors/bar.png",
+  "mime": "image/png",
+  "x": 22,
+  "y": 31,
+  "w": 17,
+  "h": 4
+ },
+ "icons/layers/electrical-contractors/bolt.png": {
+  "file": "icons/web/electrical-contractors/bolt.png",
+  "mime": "image/png",
+  "x": 25,
+  "y": 19,
+  "w": 11,
+  "h": 11
+ },
+ "icons/layers/electrical-contractors/panel.png": {
+  "file": "icons/web/electrical-contractors/panel.png",
+  "mime": "image/png",
+  "x": 16,
+  "y": 11,
+  "w": 29,
+  "h": 38
+ },
+ "icons/layers/electrical-suppliers/cord-tail.png": {
+  "file": "icons/web/electrical-suppliers/cord-tail.png",
+  "mime": "image/png",
+  "x": 17,
+  "y": 34,
+  "w": 8,
+  "h": 7
+ },
+ "icons/layers/electrical-suppliers/cord.png": {
+  "file": "icons/web/electrical-suppliers/cord.png",
+  "mime": "image/png",
+  "x": 12,
+  "y": 13,
+  "w": 19,
+  "h": 27
+ },
+ "icons/layers/electrical-suppliers/plug.png": {
+  "file": "icons/web/electrical-suppliers/plug.png",
+  "mime": "image/png",
+  "x": 26,
+  "y": 30,
+  "w": 23,
+  "h": 17
+ },
+ "icons/layers/facilities/body.png": {
+  "file": "icons/web/facilities/body.png",
+  "mime": "image/png",
+  "x": 13,
+  "y": 18,
+  "w": 18,
+  "h": 32
+ },
+ "icons/layers/facilities/head.png": {
+  "file": "icons/web/facilities/head.png",
+  "mime": "image/png",
+  "x": 18,
+  "y": 10,
+  "w": 11,
+  "h": 8
+ },
+ "icons/layers/facilities/machine.png": {
+  "file": "icons/web/facilities/machine.png",
+  "mime": "image/png",
+  "x": 28,
+  "y": 31,
+  "w": 20,
+  "h": 19
+ },
+ "icons/layers/flooring/stairs.png": {
+  "file": "icons/web/flooring/stairs.png",
+  "mime": "image/png",
+  "x": 11,
+  "y": 10,
+  "w": 39,
+  "h": 40
+ },
+ "icons/layers/general-contractor/tool-a.png": {
+  "file": "icons/web/general-contractor/tool-a.png",
+  "mime": "image/png",
+  "x": 9,
+  "y": 11,
+  "w": 41,
+  "h": 40
+ },
+ "icons/layers/general-contractor/tool-b.png": {
+  "file": "icons/web/general-contractor/tool-b.png",
+  "mime": "image/png",
+  "x": 9,
+  "y": 9,
+  "w": 41,
+  "h": 42
+ },
+ "icons/layers/hvac/fan.png": {
+  "file": "icons/web/hvac/fan.png",
+  "mime": "image/png",
+  "x": 17,
+  "y": 17,
+  "w": 26,
+  "h": 26
+ },
+ "icons/layers/hvac/frame.png": {
+  "file": "icons/web/hvac/frame.png",
+  "mime": "image/png",
+  "x": 12,
+  "y": 11,
+  "w": 37,
+  "h": 38
+ },
+ "icons/layers/insulation/arrow-a.png": {
+  "file": "icons/web/insulation/arrow-a.png",
+  "mime": "image/png",
+  "x": 12,
+  "y": 9,
+  "w": 14,
+  "h": 12
+ },
+ "icons/layers/insulation/arrow-b.png": {
+  "file": "icons/web/insulation/arrow-b.png",
+  "mime": "image/png",
+  "x": 23,
+  "y": 5,
+  "w": 14,
+  "h": 17
+ },
+ "icons/layers/insulation/arrow-c.png": {
+  "file": "icons/web/insulation/arrow-c.png",
+  "mime": "image/png",
+  "x": 35,
+  "y": 9,
+  "w": 14,
+  "h": 12
+ },
+ "icons/layers/insulation/slab-bottom.png": {
+  "file": "icons/web/insulation/slab-bottom.png",
+  "mime": "image/png",
+  "x": 6,
+  "y": 42,
+  "w": 49,
+  "h": 14
+ },
+ "icons/layers/insulation/slab-mid.png": {
+  "file": "icons/web/insulation/slab-mid.png",
+  "mime": "image/png",
+  "x": 6,
+  "y": 27,
+  "w": 49,
+  "h": 20
+ },
+ "icons/layers/insulation/slab-top.png": {
+  "file": "icons/web/insulation/slab-top.png",
+  "mime": "image/png",
+  "x": 6,
+  "y": 14,
+  "w": 48,
+  "h": 19
+ },
+ "icons/layers/landscaping/ground.png": {
+  "file": "icons/web/landscaping/ground.png",
+  "mime": "image/png",
+  "x": 6,
+  "y": 38,
+  "w": 49,
+  "h": 13
+ },
+ "icons/layers/landscaping/tree-a.png": {
+  "file": "icons/web/landscaping/tree-a.png",
+  "mime": "image/png",
+  "x": 8,
+  "y": 9,
+  "w": 36,
+  "h": 29
+ },
+ "icons/layers/landscaping/tree-b.png": {
+  "file": "icons/web/landscaping/tree-b.png",
+  "mime": "image/png",
+  "x": 31,
+  "y": 10,
+  "w": 22,
+  "h": 28
+ },
+ "icons/layers/lumber/saw.png": {
+  "file": "icons/web/lumber/saw.png",
+  "mime": "image/png",
+  "x": 12,
+  "y": 9,
+  "w": 36,
+  "h": 43
+ },
+ "icons/layers/masonry/k1.png": {
+  "file": "icons/web/masonry/k1.png",
+  "mime": "image/png",
+  "x": 12,
+  "y": 11,
+  "w": 17,
+  "h": 18
+ },
+ "icons/layers/masonry/k2.png": {
+  "file": "icons/web/masonry/k2.png",
+  "mime": "image/png",
+  "x": 32,
+  "y": 11,
+  "w": 17,
+  "h": 18
+ },
+ "icons/layers/masonry/k3.png": {
+  "file": "icons/web/masonry/k3.png",
+  "mime": "image/png",
+  "x": 12,
+  "y": 31,
+  "w": 17,
+  "h": 18
+ },
+ "icons/layers/masonry/k4.png": {
+  "file": "icons/web/masonry/k4.png",
+  "mime": "image/png",
+  "x": 32,
+  "y": 31,
+  "w": 17,
+  "h": 18
+ },
+ "icons/layers/painting/roller.png": {
+  "file": "icons/web/painting/roller.png",
+  "mime": "image/png",
+  "x": 12,
+  "y": 8,
+  "w": 37,
+  "h": 44
+ },
+ "icons/layers/paving/q1.png": {
+  "file": "icons/web/paving/q1.png",
+  "mime": "image/png",
+  "x": 10,
+  "y": 10,
+  "w": 20,
+  "h": 20
+ },
+ "icons/layers/paving/q2.png": {
+  "file": "icons/web/paving/q2.png",
+  "mime": "image/png",
+  "x": 30,
+  "y": 10,
+  "w": 20,
+  "h": 20
+ },
+ "icons/layers/paving/q3.png": {
+  "file": "icons/web/paving/q3.png",
+  "mime": "image/png",
+  "x": 10,
+  "y": 30,
+  "w": 20,
+  "h": 21
+ },
+ "icons/layers/paving/q4.png": {
+  "file": "icons/web/paving/q4.png",
+  "mime": "image/png",
+  "x": 30,
+  "y": 30,
+  "w": 20,
+  "h": 21
+ },
+ "icons/layers/plumbing/body.png": {
+  "file": "icons/web/plumbing/body.png",
+  "mime": "image/png",
+  "x": 14,
+  "y": 16,
+  "w": 30,
+  "h": 34
+ },
+ "icons/layers/plumbing/jaw.png": {
+  "file": "icons/web/plumbing/jaw.png",
+  "mime": "image/png",
+  "x": 29,
+  "y": 10,
+  "w": 18,
+  "h": 15
+ },
+ "icons/layers/plumbing/nut.png": {
+  "file": "icons/web/plumbing/nut.png",
+  "mime": "image/png",
+  "x": 16,
+  "y": 23,
+  "w": 11,
+  "h": 12
+ },
+ "icons/layers/roofing/roof.png": {
+  "file": "icons/web/roofing/roof.png",
+  "mime": "image/png",
+  "x": 8,
+  "y": 12,
+  "w": 45,
+  "h": 21
+ },
+ "icons/layers/roofing/window.png": {
+  "file": "icons/web/roofing/window.png",
+  "mime": "image/png",
+  "x": 24,
+  "y": 34,
+  "w": 14,
+  "h": 14
+ },
+ "icons/layers/snow/flake.png": {
+  "file": "icons/web/snow/flake.png",
+  "mime": "image/png",
+  "x": 13,
+  "y": 11,
+  "w": 35,
+  "h": 38
+ },
+ "icons/layers/steel/b1.png": {
+  "file": "icons/web/steel/b1.png",
+  "mime": "image/png",
+  "x": 21,
+  "y": 21,
+  "w": 20,
+  "h": 7
+ },
+ "icons/layers/steel/b2.png": {
+  "file": "icons/web/steel/b2.png",
+  "mime": "image/png",
+  "x": 21,
+  "y": 28,
+  "w": 20,
+  "h": 8
+ },
+ "icons/layers/steel/b3.png": {
+  "file": "icons/web/steel/b3.png",
+  "mime": "image/png",
+  "x": 21,
+  "y": 36,
+  "w": 20,
+  "h": 13
+ },
+ "icons/layers/steel/col.png": {
+  "file": "icons/web/steel/col.png",
+  "mime": "image/png",
+  "x": 16,
+  "y": 28,
+  "w": 30,
+  "h": 21
+ },
+ "icons/layers/steel/roof.png": {
+  "file": "icons/web/steel/roof.png",
+  "mime": "image/png",
+  "x": 8,
+  "y": 11,
+  "w": 45,
+  "h": 21
+ },
+ "icons/layers/subcontractors/body.png": {
+  "file": "icons/web/subcontractors/body.png",
+  "mime": "image/png",
+  "x": 7,
+  "y": 34,
+  "w": 34,
+  "h": 14
+ },
+ "icons/layers/subcontractors/gear-a.png": {
+  "file": "icons/web/subcontractors/gear-a.png",
+  "mime": "image/png",
+  "x": 37,
+  "y": 12,
+  "w": 15,
+  "h": 14
+ },
+ "icons/layers/subcontractors/gear-b.png": {
+  "file": "icons/web/subcontractors/gear-b.png",
+  "mime": "image/png",
+  "x": 34,
+  "y": 25,
+  "w": 11,
+  "h": 11
+ },
+ "icons/layers/subcontractors/head.png": {
+  "file": "icons/web/subcontractors/head.png",
+  "mime": "image/png",
+  "x": 13,
+  "y": 14,
+  "w": 21,
+  "h": 18
+ },
+ "icons/layers/supplier/fork.png": {
+  "file": "icons/web/supplier/fork.png",
+  "mime": "image/png",
+  "x": 42,
+  "y": 12,
+  "w": 11,
+  "h": 34
+ },
+ "icons/layers/supplier/truck.png": {
+  "file": "icons/web/supplier/truck.png",
+  "mime": "image/png",
+  "x": 8,
+  "y": 15,
+  "w": 33,
+  "h": 32
+ }
+}
